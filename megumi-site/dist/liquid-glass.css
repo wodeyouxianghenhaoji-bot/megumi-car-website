@@ -1,0 +1,58 @@
+/* Clear, white-tinted glass: low fill, transmitted background and a thin lit rim. */
+[data-theme] .topbar{
+ --liquid-fill:linear-gradient(125deg,rgba(255,255,255,.24),rgba(255,255,255,.065) 43%,rgba(255,255,255,.14) 78%,rgba(255,255,255,.22));
+ --liquid-ink:#f7f8fc;
+ --liquid-secondary:#d7dbe3;
+ --liquid-text-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+[data-theme=light] .topbar{
+ --liquid-fill:linear-gradient(125deg,rgba(255,255,255,.64),rgba(255,255,255,.37) 43%,rgba(255,255,255,.49) 78%,rgba(255,255,255,.66));
+ --liquid-ink:#282b34;
+ --liquid-secondary:#5e6470;
+ --liquid-text-shadow:none;
+}
+[data-theme] .topbar:not(.is-scrolled),
+[data-theme] .topbar.is-scrolled .header-actions{
+ background:var(--liquid-fill);
+ color:var(--liquid-ink);
+ border:1px solid rgba(255,255,255,.36);
+ box-shadow:0 10px 30px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -1px 0 rgba(255,255,255,.13),inset 1px 0 0 rgba(255,255,255,.19),inset -1px 0 0 rgba(255,255,255,.1);
+ backdrop-filter:blur(18px) saturate(175%) brightness(1.18);
+ -webkit-backdrop-filter:blur(18px) saturate(175%) brightness(1.18);
+}
+.topbar:not(.is-scrolled)::before,
+.topbar.is-scrolled .header-actions::before{
+ content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+ padding:1px;background:linear-gradient(135deg,#ffffffd9 0%,#ffffff13 22%,#ffffff00 44%,#ffffff80 72%,#ffffff20 100%);
+ -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+ mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+ -webkit-mask-composite:xor;mask-composite:exclude;
+}
+[data-theme] .topbar .brand,
+[data-theme] .topbar nav{color:var(--liquid-ink);text-shadow:var(--liquid-text-shadow)}
+[data-theme] .topbar nav a:hover{color:var(--liquid-ink);opacity:.75}
+[data-theme] .topbar .brand small{color:var(--liquid-secondary);text-shadow:var(--liquid-text-shadow)}
+[data-theme] .topbar .glass:not(.whatsapp){
+ background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.035));
+ color:var(--liquid-ink);border:1px solid rgba(255,255,255,.32);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(255,255,255,.08),0 3px 8px rgba(0,0,0,.035);
+ backdrop-filter:blur(8px) saturate(150%);
+ -webkit-backdrop-filter:blur(8px) saturate(150%);
+ text-shadow:var(--liquid-text-shadow);
+ transition:background .22s,box-shadow .22s;
+}
+[data-theme] .topbar .glass:not(.whatsapp):hover{
+ background:linear-gradient(145deg,rgba(255,255,255,.25),rgba(255,255,255,.075));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 3px 12px rgba(0,0,0,.07);
+}
+[data-theme] .topbar .instagram svg,
+[data-theme] .topbar .icon-button svg{color:var(--liquid-ink)}
+[data-theme] .topbar .glass:not(.whatsapp) .tiny-arrow{color:var(--liquid-secondary)}
+[data-theme] .topbar .brand-mark{box-shadow:0 1px 8px #0000000a}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ [data-theme] .topbar:not(.is-scrolled),[data-theme] .topbar.is-scrolled .header-actions{background:rgba(68,71,77,.96)}
+ [data-theme=light] .topbar:not(.is-scrolled),[data-theme=light] .topbar.is-scrolled .header-actions{background:rgba(242,243,247,.96)}
+}
+@media(max-width:700px){
+ [data-theme] .topbar:not(.is-scrolled),[data-theme] .topbar.is-scrolled .header-actions{backdrop-filter:blur(15px) saturate(165%) brightness(1.15);-webkit-backdrop-filter:blur(15px) saturate(165%) brightness(1.15)}
+}
