@@ -1,0 +1,2 @@
+# Keep the original manufacturer SVG bytes, including their original line endings.
+*.svg -text
