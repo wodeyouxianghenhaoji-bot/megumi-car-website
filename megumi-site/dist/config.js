@@ -1,6 +1,6 @@
 // 联系方式沿用原配置；真实 WhatsApp 号码/链接确认后填写，不使用固定电话代替。
 window.SITE_CONFIG = {
- whatsapp: 'https://wa.me/819044600378', instagram: '', googleMapsApiKey: '',
+ whatsapp: 'https://wa.me/819044600378', instagram: 'https://www.instagram.com/megumicars/', googleMapsApiKey: '',
  // null 表示尚未核实；available 未确认为 true 时仅作实拍展示。
  vehicles: [
  {id:'MG-001',brand:'Bentley',model:'Continental GT',name:'宾利 Continental GT',nameConfirmed:false,body:'双门轿跑',color:'白色（照片所示）',image:'assets/bentley-continental-gt.webp',thumbnail:'assets/bentley-continental-gt-small.webp',available:false,year:null,mileageKm:null,grade:null,fuel:null,transmission:null,steering:null,condition:null,repairHistory:null,priceJPY:null,description:'双门轿跑车身、圆形前灯与网状格栅，展现从容的豪华气质。照片由公司提供，具体车型、版本及车辆资料尚待核实。'},
