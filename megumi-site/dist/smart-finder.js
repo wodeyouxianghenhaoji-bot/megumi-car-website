@@ -11,7 +11,10 @@
  const matchLanguage=value=>{const code=String(value||'').replace('_','-').toLowerCase().split('-')[0];return Object.hasOwn(messages,code)?code:null};
  function initialLanguage(){const saved=matchLanguage(readPref());if(saved)return saved;for(const value of navigator.languages||[navigator.language]){const language=matchLanguage(value);if(language)return language}return 'en'}
  let language=initialLanguage(),brands=[],loadFailed=false;
- const state={open:'brand',minimized:false,brand:null,model:'',query:'',custom:false,customValue:'',all:false,type:null,typeBrand:'',budget:30000};
+ const state={open:'brand',brand:null,model:'',query:'',custom:false,customValue:'',all:false,type:null,typeBrand:'',budget:30000};
+ let panelOpen=false,pinned=false,hoverTimer,hideTimer,touchHandled=false;
+ const launcher=document.createElement('button');launcher.id='smart-finder-launcher';launcher.type='button';launcher.className='sf-launcher';launcher.setAttribute('aria-controls',root.id);launcher.setAttribute('aria-haspopup','dialog');launcher.setAttribute('aria-expanded','false');launcher.innerHTML='<span class="sf-orb-glow" aria-hidden="true"></span><span class="sf-orb-label"></span>';root.after(launcher);
+ root.setAttribute('role','dialog');root.setAttribute('aria-modal','false');root.setAttribute('aria-hidden','true');root.inert=true;root.dataset.revealed='false';
  const typeCodes=['SUV','Sedan','MPV','Hatchback','Coupe','Pickup','Van'];
  const quickBudgets=[5000,10000,25000,50000,100000,200000];
  const t=()=>messages[language];
@@ -69,16 +72,16 @@
   root.querySelectorAll('[data-sf-panel]').forEach(panel=>{const open=panel.dataset.sfPanel===state.open;panel.dataset.open=String(open);panel.setAttribute('aria-hidden',String(!open));panel.inert=!open});
  }
  function build(){
-  root.lang=language;root.dir=language==='ar'?'rtl':'ltr';root.dataset.minimized=String(state.minimized);
-  root.innerHTML=`<div class="sf-heading"><div><h2 id="sf-title">${esc(t().title)}</h2><p>${esc(t().intro)}</p></div><button type="button" id="sf-minimize" aria-label="${esc(state.minimized?t().expand:t().minimize)}" aria-expanded="${!state.minimized}">${state.minimized?'+':'−'}</button></div><div class="sf-body" ${state.minimized?'hidden':''}>${[['brand','▦',t().brand,t().brandSub],['type','◇',t().type,t().typeSub],['budget','$',t().budget,t().budgetSub]].map(([id,mark,label,subtitle])=>`<section class="sf-section"><h3><button type="button" class="sf-choice" id="sf-toggle-${id}" data-sf-toggle="${id}" aria-controls="sf-panel-${id}" aria-expanded="false"><span class="sf-mark" aria-hidden="true">${mark}</span><span class="sf-choice-copy"><strong>${esc(label)}</strong><small>${esc(subtitle)}</small></span><span class="sf-chevron" aria-hidden="true">+</span></button></h3><div class="sf-fold" id="sf-panel-${id}" data-sf-panel="${id}" data-open="false" aria-hidden="true" inert><div class="sf-fold-inner"><div class="sf-content" data-sf-${id}-stage></div></div></div></section>`).join('')}</div><div class="sf-footer" ${state.minimized?'hidden':''}>${link(t().directMessage,t().direct,'sf-direct')}<button type="button" class="sf-reset" data-sf-reset>${esc(t().reset)}</button></div>`;
+  root.lang=language;root.dir=language==='ar'?'rtl':'ltr';launcher.querySelector('.sf-orb-label').textContent=t().launcher;launcher.setAttribute('aria-label',t().expand);launcher.title=t().expand;
+  root.innerHTML=`<div class="sf-heading"><div><h2 id="sf-title">${esc(t().title)}</h2><p>${esc(t().intro)}</p></div><button type="button" id="sf-close" aria-label="${esc(t().close)}">×</button></div><div class="sf-body">${[['brand','▦',t().brand,t().brandSub],['type','◇',t().type,t().typeSub],['budget','$',t().budget,t().budgetSub]].map(([id,mark,label,subtitle])=>`<section class="sf-section"><h3><button type="button" class="sf-choice" id="sf-toggle-${id}" data-sf-toggle="${id}" aria-controls="sf-panel-${id}" aria-expanded="false"><span class="sf-mark" aria-hidden="true">${mark}</span><span class="sf-choice-copy"><strong>${esc(label)}</strong><small>${esc(subtitle)}</small></span><span class="sf-chevron" aria-hidden="true">+</span></button></h3><div class="sf-fold" id="sf-panel-${id}" data-sf-panel="${id}" data-open="false" aria-hidden="true" inert><div class="sf-fold-inner"><div class="sf-content" data-sf-${id}-stage></div></div></div></section>`).join('')}</div><div class="sf-footer">${link(t().directMessage,t().direct,'sf-direct')}<button type="button" class="sf-reset" data-sf-reset>${esc(t().reset)}</button></div>`;
   renderBrand();renderTypes();renderBudget();updateAccordion();position();
  }
  root.addEventListener('error',event=>{if(event.target.matches('.sf-logo-box img'))event.target.closest('.sf-logo-box').hidden=true},true);
  root.addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button||!root.contains(button))return;
-  if(button.id==='sf-minimize'){state.minimized=!state.minimized;root.dataset.minimized=String(state.minimized);root.querySelector('.sf-body').hidden=state.minimized;root.querySelector('.sf-footer').hidden=state.minimized;button.textContent=state.minimized?'+':'−';button.setAttribute('aria-label',state.minimized?t().expand:t().minimize);button.setAttribute('aria-expanded',!state.minimized);position()}
+  if(button.id==='sf-close'){closePanel(true);return}
   if(button.hasAttribute('data-sf-toggle')){state.open=state.open===button.dataset.sfToggle?null:button.dataset.sfToggle;updateAccordion()}
-  if(button.hasAttribute('data-sf-brand')){state.brand=brands.find(brand=>brand.name===button.dataset.sfBrand)||null;state.model='';state.query='';state.custom=false;state.customValue='';state.all=false;renderBrand();root.querySelector('#sf-model-search')?.focus({preventScroll:true})}
+  if(button.hasAttribute('data-sf-brand')){state.brand=brands.find(brand=>brand.name===button.dataset.sfBrand)||null;state.model='';state.query='';state.custom=false;state.customValue='';state.all=false;renderBrand();if(matchMedia('(hover: hover) and (pointer: fine)').matches||event.detail===0)root.querySelector('#sf-model-search')?.focus({preventScroll:true})}
   if(button.hasAttribute('data-sf-back')){const previous=state.brand?.name;state.brand=null;renderBrand();[...root.querySelectorAll('[data-sf-brand]')].find(item=>item.dataset.sfBrand===previous)?.focus({preventScroll:true})}
   if(button.hasAttribute('data-sf-model')){if(!state.brand.models.includes(button.dataset.sfModel))return;state.model=button.dataset.sfModel;state.custom=false;root.querySelector('.sf-custom').hidden=true;root.querySelector('[data-sf-other]').setAttribute('aria-expanded','false');renderModelList();renderBrandResult();[...root.querySelectorAll('[data-sf-model]')].find(item=>item.dataset.sfModel===state.model)?.focus({preventScroll:true})}
   if(button.hasAttribute('data-sf-more')){state.all=!state.all;renderModelList();root.querySelector('[data-sf-more]')?.focus({preventScroll:true})}
@@ -87,7 +90,7 @@
   if(button.hasAttribute('data-sf-quick')){state.budget=Number(button.dataset.sfQuick);updateBudget()}
   if(button.hasAttribute('data-sf-reset')){Object.assign(state,{brand:null,model:'',query:'',custom:false,customValue:'',all:false,type:null,typeBrand:'',budget:30000});renderBrand();renderTypes();renderBudget()}
  });
- root.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.open){const previous=state.open;state.open=null;updateAccordion();root.querySelector(`[data-sf-toggle="${previous}"]`)?.focus({preventScroll:true})}});
+ root.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closePanel(true)}});
  root.addEventListener('input',event=>{
   if(event.target.id==='sf-model-search'){state.query=event.target.value;state.model='';renderModelList();renderBrandResult()}
   if(event.target.id==='sf-custom-model'){state.customValue=event.target.value;renderBrandResult()}
@@ -96,18 +99,56 @@
  root.addEventListener('change',event=>{if(event.target.id==='sf-type-brand'){state.typeBrand=brands.some(brand=>brand.name===event.target.value)?event.target.value:'';const anchor=root.querySelector('.sf-type-result a');if(anchor)updateLink(anchor,typeMessage())}});
  document.addEventListener('click',event=>{const option=event.target.closest('[data-lang]');if(option){const next=matchLanguage(option.dataset.lang);if(next&&next!==language){language=next;build()}}});
  window.addEventListener('storage',event=>{if(event.key==='megumi-preferred-language'){language=matchLanguage(event.newValue)||initialLanguage();build()}});
+ function cancelHoverClose(){clearTimeout(hoverTimer)}
+ function openPanel(pin=false,focus=false){
+  cancelHoverClose();clearTimeout(hideTimer);if(launcher.hidden)return;
+  pinned=pinned||pin;panelOpen=true;root.hidden=false;root.inert=false;root.setAttribute('aria-hidden','false');launcher.setAttribute('aria-expanded','true');
+  position();requestAnimationFrame(()=>{if(panelOpen)root.dataset.revealed='true'});
+  if(focus)root.querySelector('#sf-close')?.focus({preventScroll:true});
+ }
+ function closePanel(restoreFocus=false,immediate=false){
+  cancelHoverClose();clearTimeout(hideTimer);panelOpen=false;pinned=false;root.dataset.revealed='false';root.inert=true;root.setAttribute('aria-hidden','true');launcher.setAttribute('aria-expanded','false');
+  if(immediate)root.hidden=true;else hideTimer=setTimeout(()=>{if(!panelOpen)root.hidden=true},240);
+  if(restoreFocus&&!launcher.hidden)launcher.focus({preventScroll:true});
+ }
+ function hoverClose(){cancelHoverClose();if(!pinned)hoverTimer=setTimeout(()=>{if(!pinned&&!root.contains(document.activeElement))closePanel()},340)}
+ launcher.addEventListener('pointerenter',event=>{if(event.pointerType==='mouse'&&matchMedia('(hover: hover) and (pointer: fine)').matches)openPanel()});
+ launcher.addEventListener('pointerleave',event=>{if(event.pointerType==='mouse')hoverClose()});
+ root.addEventListener('pointerenter',cancelHoverClose);
+ root.addEventListener('pointerleave',event=>{if(event.pointerType==='mouse')hoverClose()});
+ root.addEventListener('pointerdown',()=>{pinned=true;cancelHoverClose()});
+ launcher.addEventListener('pointerdown',event=>{if(event.pointerType==='touch'||event.pointerType==='pen'){touchHandled=true;if(panelOpen)closePanel();else openPanel(true)}});
+ launcher.addEventListener('pointercancel',()=>{touchHandled=false});
+ launcher.addEventListener('click',()=>{if(touchHandled){touchHandled=false;return}if(panelOpen&&!pinned){pinned=true;return}if(panelOpen)closePanel();else openPanel(true)});
+ launcher.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){event.preventDefault();openPanel(true,true)}if(event.key==='Escape')closePanel(true)});
+ document.addEventListener('pointerdown',event=>{if(panelOpen&&!root.contains(event.target)&&!launcher.contains(event.target))closePanel()});
+ // A finger passing over the orb opens it without cancelling native page scrolling.
+ document.addEventListener('touchmove',event=>{
+  if(panelOpen||launcher.hidden||!event.touches.length)return;
+  const touch=event.touches[0],rect=launcher.getBoundingClientRect();
+  if(touch.clientX>=rect.left&&touch.clientX<=rect.right&&touch.clientY>=rect.top&&touch.clientY<=rect.bottom)openPanel(true);
+ },{passive:true});
  function position(){
-  const floating=header.classList.contains('is-scrolled');root.hidden=!floating;if(!floating)return;
-  const rect=dock.getBoundingClientRect();const viewport=window.visualViewport;
+  const viewport=window.visualViewport;
   const width=viewport?.width||window.innerWidth,height=viewport?.height||window.innerHeight;
-  root.style.setProperty('--sf-width',`${Math.min(Math.max(rect.width,340),540,width-20)}px`);
-  root.style.setProperty('--sf-right',`${Math.max(10,width-rect.right)}px`);
-  root.style.setProperty('--sf-top',`${Math.max(0,rect.bottom)+12}px`);
-  root.style.setProperty('--sf-max-height',`${Math.max(80,height-rect.bottom-28)}px`);
+  const mobile=width<=700,floating=header.classList.contains('is-scrolled');
+  launcher.hidden=!mobile&&!floating;
+  const keyboardInset=Math.max(0,window.innerHeight-height-(viewport?.offsetTop||0));
+  if(mobile){
+   launcher.style.setProperty('--sf-orb-right','16px');launcher.style.setProperty('--sf-orb-top','auto');launcher.style.setProperty('--sf-orb-bottom',`calc(${18+keyboardInset}px + env(safe-area-inset-bottom,0px))`);
+   root.style.setProperty('--sf-width',`${width-24}px`);root.style.setProperty('--sf-right','12px');root.style.setProperty('--sf-top','auto');root.style.setProperty('--sf-bottom',`calc(${104+keyboardInset}px + env(safe-area-inset-bottom,0px))`);root.style.setProperty('--sf-max-height',`${Math.max(100,Math.min(620,height-128))}px`);root.dataset.placement='bottom';
+  }else{
+   const rect=dock.getBoundingClientRect(),right=Math.max(12,width-rect.right),orbTop=Math.max(0,rect.bottom)+14;
+   launcher.style.setProperty('--sf-orb-right',`${right}px`);launcher.style.setProperty('--sf-orb-top',`${orbTop}px`);launcher.style.setProperty('--sf-orb-bottom','auto');
+   root.style.setProperty('--sf-width',`${Math.min(Math.max(rect.width,340),540,width-24)}px`);root.style.setProperty('--sf-right',`${right}px`);root.style.setProperty('--sf-top',`${orbTop+84}px`);root.style.setProperty('--sf-bottom','auto');root.style.setProperty('--sf-max-height',`${Math.max(100,height-orbTop-100)}px`);root.dataset.placement='top';
+  }
+  if(launcher.hidden){closePanel(false,true);return}
+  if(!panelOpen&&root.dataset.revealed!=='true')root.hidden=true;
  }
  new MutationObserver(position).observe(header,{attributes:true,attributeFilter:['class']});
  if('ResizeObserver' in window)new ResizeObserver(position).observe(dock);
  window.addEventListener('resize',position,{passive:true});window.visualViewport?.addEventListener('resize',position,{passive:true});
+ document.addEventListener('visibilitychange',()=>{launcher.dataset.paused=String(document.hidden);root.dataset.paused=String(document.hidden)});
  build();
  fetch('finder-data.json?v=2').then(response=>{if(!response.ok)throw Error('catalogue');return response.json()}).then(data=>{
   if(!Array.isArray(data.brands)||data.brands.length!==20||data.brands.some(brand=>typeof brand.name!=='string'||!Array.isArray(brand.models)||brand.models.some(model=>typeof model!=='string')))throw Error('catalogue');

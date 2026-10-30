@@ -34,3 +34,7 @@ window.MEGUMI_FINDER_I18N = {
 Object.entries({
  zh:['查看全部 {count} 个车系','收起车系列表'],en:['View all {count} model series','Show fewer models'],ar:['عرض جميع سلاسل الطرازات ({count})','عرض طرازات أقل'],nl:['Bekijk alle {count} modellenreeksen','Minder modellen tonen'],fr:['Voir les {count} gammes','Afficher moins de modèles'],de:['Alle {count} Modellreihen anzeigen','Weniger Modelle anzeigen'],it:['Vedi tutte le {count} serie','Mostra meno modelli'],pt:['Ver todas as {count} linhas','Mostrar menos modelos'],ru:['Все модельные ряды: {count}','Показать меньше моделей'],es:['Ver las {count} series','Mostrar menos modelos']
 }).forEach(([lang,[more,less]])=>Object.assign(window.MEGUMI_FINDER_I18N[lang],{more,less}));
+
+Object.entries({
+ zh:['找车','关闭找车面板'],en:['Find car','Close car finder'],ar:['ابحث','إغلاق البحث عن سيارة'],nl:['Zoekauto','Autozoeker sluiten'],fr:['Voiture','Fermer le sélecteur'],de:['Auto','Fahrzeugsuche schließen'],it:['Auto','Chiudi la ricerca auto'],pt:['Procurar','Fechar a procura de carro'],ru:['Авто','Закрыть подбор автомобиля'],es:['Buscar','Cerrar buscador']
+}).forEach(([lang,[launcher,close]])=>Object.assign(window.MEGUMI_FINDER_I18N[lang],{launcher,close}));

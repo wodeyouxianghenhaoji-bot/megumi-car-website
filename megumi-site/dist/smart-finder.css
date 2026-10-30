@@ -169,3 +169,58 @@
 #smart-finder .sf-brand>span[dir=ltr]{font-size:13px}
 /* Keep the three alternative routes reachable while the expanded choices scroll. */
 #smart-finder .sf-fold .sf-fold-inner{max-height:max(170px,calc(var(--sf-max-height,740px) - 435px));overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a8b4c24d transparent}
+/* Compact liquid-glass launcher. Only its internal light moves; the orb stays still. */
+#smart-finder-launcher.sf-launcher{
+ position:fixed;z-index:101;right:var(--sf-orb-right,18px);top:var(--sf-orb-top,auto);bottom:var(--sf-orb-bottom,20px);
+ display:grid;place-items:center;width:72px;height:72px;padding:0;border-radius:50%;overflow:hidden;isolation:isolate;
+ border:1px solid #ffffff8c;color:#fff;cursor:pointer;touch-action:pan-y;
+ background:linear-gradient(140deg,#ffffff29,#ffffff07 55%,#ffffff1f),#18233836;
+ backdrop-filter:blur(16px) saturate(190%);-webkit-backdrop-filter:blur(16px) saturate(190%);
+ box-shadow:inset 0 1px 2px #ffffffb3,inset 0 -5px 11px #a8cfff30,0 8px 26px #0004,0 0 20px #7cadf51a;
+ -webkit-tap-highlight-color:transparent;transition:border-color .25s,box-shadow .25s;
+ font-family:var(--font,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif);font-size:14px;line-height:1.3;
+}
+#smart-finder-launcher[hidden]{display:none!important}
+#smart-finder-launcher::before{content:'';position:absolute;inset:2px;border-radius:inherit;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 29% 9%,#ffffffa8,transparent 32%),radial-gradient(ellipse at 71% 95%,#ffffff62,transparent 39%);box-shadow:inset 0 0 0 1px #ffffff25}
+#smart-finder-launcher::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;background:linear-gradient(135deg,#fffffff2,#ffffff0a 35%,#afcdff78 65%,#ffffffd9);padding:1px;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+#smart-finder-launcher .sf-orb-glow{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none;opacity:.88}
+#smart-finder-launcher .sf-orb-glow::before{content:'';position:absolute;inset:-42%;background:radial-gradient(ellipse at 27% 37%,#2c8fffeb 0%,transparent 33%),radial-gradient(ellipse at 76% 47%,#dc8cffa6 0%,transparent 31%),radial-gradient(ellipse at 49% 78%,#ffb95de0 0%,transparent 28%),radial-gradient(ellipse at 75% 76%,#fa7197b3 0%,transparent 29%);filter:blur(7px);animation:sf-orb-colors 13s linear infinite}
+#smart-finder-launcher .sf-orb-glow::after{content:'';position:absolute;inset:-20%;background:radial-gradient(ellipse at 22% 62%,#8cf1ffcc,transparent 38%),radial-gradient(ellipse at 76% 31%,#636bff8c,transparent 38%),linear-gradient(168deg,transparent 38%,#effcff9c 48%,#fff7ce80 53%,transparent 62%);filter:blur(4px);mix-blend-mode:screen;animation:sf-orb-ribbon 8s ease-in-out infinite alternate}
+#smart-finder-launcher .sf-orb-label{position:relative;z-index:3;display:block;max-width:65px;border-radius:20px;padding:6px 7px;font-weight:650;font-size:13px;line-height:1.3;letter-spacing:.04em;text-align:center;background:#1520333b;text-shadow:0 1px 5px #000b;pointer-events:none}
+#smart-finder-launcher[aria-expanded=true]{border-color:#ffffffd9;box-shadow:inset 0 1px 2px #fff,inset 0 -5px 11px #a8cfff30,0 8px 26px #0004,0 0 25px #80b8ff45}
+#smart-finder-launcher:focus-visible{outline:3px solid #9ad2ff;outline-offset:5px}
+[data-theme=light] #smart-finder-launcher{background:linear-gradient(140deg,#ffffff7a,#ffffff12 55%,#ffffff4d),#ffffff22;box-shadow:inset 0 1px 2px #fff,inset 0 -5px 11px #a8cfff30,0 8px 26px #253a601f,0 0 20px #7cadf51a}
+[data-theme=light] #smart-finder-launcher .sf-orb-label{color:#152239;background:#ffffff70;text-shadow:0 1px 4px #fff9}
+@keyframes sf-orb-colors{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes sf-orb-ribbon{0%{transform:translate(-7%,-6%) rotate(-19deg);opacity:.66}50%{transform:translate(4%,5%) rotate(4deg);opacity:.95}100%{transform:translate(7%,-3%) rotate(21deg);opacity:.76}}
+/* The expanded glass keeps readable controls and a softly travelling rim of light. */
+@property --sf-halo-angle{syntax:'<angle>';inherits:false;initial-value:0deg}
+#smart-finder.sf{
+ bottom:var(--sf-bottom,auto);background:linear-gradient(145deg,#ffffff14,#ffffff03 60%),#11182494;
+ border-color:#ffffff45;box-shadow:inset 0 1px 0 #ffffff55,0 20px 65px #0005,0 0 30px #8db5ec0f;
+ backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);
+ opacity:0;transform:translateY(-9px) scale(.975);transform-origin:top right;
+ pointer-events:none;transition:opacity .22s ease,transform .28s cubic-bezier(.22,1,.36,1);animation:sf-panel-glow 15s linear infinite;
+}
+#smart-finder[data-placement=bottom]{transform:translateY(10px) scale(.98);transform-origin:bottom right}
+#smart-finder[data-revealed=true]{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+#smart-finder.sf::before{content:'';position:absolute;inset:0;z-index:3;border-radius:inherit;pointer-events:none;padding:1px;background:conic-gradient(from var(--sf-halo-angle),#ffffff15,#90d8ff99,#b1a0ff70,#ffcc9273,#ffffff15 65%,#a0efff80,#ffffff15);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+#smart-finder #sf-close{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border:1px solid #ffffff30;border-radius:50%;padding:0;color:#f6f8fc;background:#ffffff0b;font-size:28px;line-height:1;font-weight:300}
+#smart-finder #sf-close:hover{background:#ffffff24}
+#smart-finder .sf-type>span:first-child{flex:1;font-size:13px;line-height:1.5}
+#smart-finder .sf-type>.sf-type-check{flex:0 0 auto;font-size:16px}
+@keyframes sf-panel-glow{from{--sf-halo-angle:0deg}to{--sf-halo-angle:360deg}}
+@media(max-width:700px){
+ #smart-finder-launcher.sf-launcher{width:66px;height:66px}
+ #smart-finder-launcher .sf-orb-label{font-size:12px;max-width:60px}
+ #smart-finder.sf{backdrop-filter:blur(20px) saturate(155%);-webkit-backdrop-filter:blur(20px) saturate(155%);border-radius:25px}
+ #smart-finder .sf-fold .sf-fold-inner{max-height:max(160px,calc(var(--sf-max-height,600px) - 355px))}
+}
+#smart-finder-launcher[data-paused=true] .sf-orb-glow::before,#smart-finder-launcher[data-paused=true] .sf-orb-glow::after,#smart-finder[data-paused=true]{animation-play-state:paused}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){#smart-finder.sf{background:#222a36ed}#smart-finder-launcher.sf-launcher{background:#364a65}}
+@media(prefers-reduced-motion:reduce){
+ #smart-finder-launcher .sf-orb-glow::before,#smart-finder-launcher .sf-orb-glow::after,#smart-finder.sf{animation:none!important}
+ #smart-finder.sf,#smart-finder-launcher.sf-launcher{transition:none}
+}
+
+[data-theme=light] #smart-finder.sf{background:linear-gradient(145deg,#ffffff14,#ffffff03 60%),#111824cf}
