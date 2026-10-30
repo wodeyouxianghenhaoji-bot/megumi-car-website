@@ -7,10 +7,10 @@
  let current=0,timer,paused=motion.matches,visible=true,touchX=null;
  function show(index){
   current=(index+slides.length)%slides.length;
-  slides.forEach((slide,i)=>{if(slide.classList.contains('is-active')&&i!==current){slide.classList.add('is-leaving');setTimeout(()=>slide.classList.remove('is-leaving'),1400)}slide.classList.toggle('is-active',i===current);slide.setAttribute('aria-hidden',i!==current)});
+  slides.forEach((slide,i)=>{if(slide.classList.contains('is-active')&&i!==current){slide.classList.add('is-leaving');setTimeout(()=>slide.classList.remove('is-leaving'),1900)}slide.classList.toggle('is-active',i===current);slide.setAttribute('aria-hidden',i!==current)});
   controls.forEach((button,i)=>button.setAttribute('aria-pressed',i===current));
  }
- function schedule(){clearInterval(timer);if(!paused&&visible&&!document.hidden)timer=setInterval(()=>show(current+1),6500)}
+ function schedule(){clearInterval(timer);if(!paused&&visible&&!document.hidden)timer=setInterval(()=>show(current+1),10000)}
  function state(){pause.setAttribute('aria-label',paused?'播放图片':'暂停图片');pause.setAttribute('aria-pressed',paused);pause.classList.toggle('is-paused',paused);hero.classList.toggle('motion-paused',paused);schedule()}
  controls.forEach(button=>button.addEventListener('click',()=>{show(Number(button.dataset.slide));schedule()}));
  pause.addEventListener('click',()=>{paused=!paused;state()});
@@ -23,6 +23,8 @@
  }
  document.querySelectorAll('[data-carousel]').forEach(initializeCarousel);
  const header=document.querySelector('.topbar');let scheduled=false;
- function updateHeader(){header.classList.toggle('is-scrolled',window.scrollY>16);scheduled=false}
+ // A small hysteresis prevents the floating buttons from flickering at the threshold.
+ let floating=window.scrollY>80;
+ function updateHeader(){if(window.scrollY>80)floating=true;else if(window.scrollY<24)floating=false;header.classList.toggle('is-scrolled',floating);scheduled=false}
  window.addEventListener('scroll',()=>{if(!scheduled){requestAnimationFrame(updateHeader);scheduled=true}},{passive:true});updateHeader();
 })();

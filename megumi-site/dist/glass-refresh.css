@@ -1,0 +1,114 @@
+﻿/* Transparent, softly lit surfaces. All colors have matching light-mode values. */
+:root{
+ --module-glass:linear-gradient(145deg,#ffffff0e,#ffffff03 48%,#ffffff09);
+ --module-base:#202126b5;--glass-edge:#ffffff24;--glass-highlight:#ffffff21;
+ --module-shadow:0 16px 46px #00000024,inset 0 1px 0 var(--glass-highlight);
+ --glass-blue:#7fa7d30c;--glass-gold:#d9bc8809;
+}
+[data-theme=light]{
+ --module-glass:linear-gradient(145deg,#ffffffd9,#ffffff8c 48%,#ffffffc7);
+ --module-base:#ffffffa6;--glass-edge:#ffffffed;--glass-highlight:#fff;
+ --module-shadow:0 12px 38px #27334a0b,inset 0 1px 0 #fff;
+ --glass-blue:#8cb9ed13;--glass-gold:#d4c39e0d;
+}
+body{background:radial-gradient(ellipse at 12% 22%,var(--glass-blue),transparent 38%),radial-gradient(ellipse at 88% 64%,var(--glass-gold),transparent 36%),var(--bg)}
+.about-section,.brand-section,.contact-section,.customer-reviews{
+ background:radial-gradient(ellipse at 4% 5%,var(--glass-blue),transparent 60%),var(--section-alt);
+ border-block:1px solid var(--line);
+}
+[data-theme=dark] .brand-section{background:radial-gradient(ellipse at 85% 20%,#8eacdd0b,transparent 55%),#1c1d21}
+[data-theme] :is(.advantages-section .advantage,.brand-list button,.model-panel,.vehicle-card,.process-section .step,.review,.map-panel,.language-menu){
+ background:var(--module-glass),var(--module-base);
+ border:1px solid var(--glass-edge);
+ box-shadow:var(--module-shadow);
+ backdrop-filter:blur(14px) saturate(135%);
+ -webkit-backdrop-filter:blur(14px) saturate(135%);
+}
+[data-theme] :is(.advantages-section .advantage,.brand-list button,.model-panel,.vehicle-card,.review){border-radius:24px}
+[data-theme] .brand-list button[aria-pressed=true]{border-color:var(--gold);background:linear-gradient(135deg,#d9bc881c,#ffffff04),var(--module-base)}
+.model-list button{background:linear-gradient(135deg,#ffffff10,#ffffff03);box-shadow:inset 0 1px 0 #ffffff12}
+[data-theme=light] .model-list button{background:#ffffff91;box-shadow:inset 0 1px 0 #fff}
+.process-section{background:linear-gradient(145deg,#ffffff07,transparent),var(--surface);box-shadow:inset 0 1px 0 var(--glass-highlight);border-color:var(--glass-edge)}
+[data-theme] .step.current{border-color:color-mix(in srgb,var(--step-color) 55%,transparent);background:linear-gradient(145deg,color-mix(in srgb,var(--step-color) 14%,transparent),#ffffff03),var(--module-base)}
+[data-theme] .topbar:not(.is-scrolled){box-shadow:0 14px 44px #0000001a,inset 0 1px 0 #ffffff50;border-color:#ffffff23}
+/* The floating contact dock always has readable, bright glass, independent of the page theme. */
+[data-theme] .topbar.is-scrolled .header-actions{
+ --liquid-ink:#20262d;--liquid-secondary:#4d5965;--liquid-text-shadow:none;
+ background:linear-gradient(130deg,#fffffff0,#f3f8ffcf 55%,#ffffffed);
+ border:1px solid #ffffffd9;box-shadow:0 16px 54px #00000026,inset 0 1px 0 #fff;
+ backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);
+}
+[data-theme] .topbar.is-scrolled .instagram{color:#20262d;background:linear-gradient(135deg,#ffffffc9,#ffffff4d);border:1px solid #ffffffd9}
+[data-theme] .topbar.is-scrolled .instagram svg{color:#20262d}
+[data-theme] .topbar.is-scrolled .social{transition:min-width .45s cubic-bezier(.22,1,.36,1),min-height .45s cubic-bezier(.22,1,.36,1),padding .45s ease,background .25s}
+.topbar .social svg,.topbar .social span{transition:width .45s,height .45s,font-size .45s}
+/* A true primary action, substantially larger than its previous 210 × 62 box. */
+.hero .find-car,.request-banner .find-car{
+ min-width:300px;min-height:84px;padding:22px 38px;gap:42px;
+ font-size:24px;font-weight:700;border-radius:22px;color:#fff;
+ background:linear-gradient(140deg,#29c978,#18ac5e);
+ border:1px solid #76e6aa70;box-shadow:0 12px 38px #14b56824,inset 0 1px 0 #a9f1c975;
+}
+.hero .find-car svg,.request-banner .find-car svg{width:32px;height:32px}
+.hero .find-car:hover,.request-banner .find-car:hover{background:linear-gradient(140deg,#35d484,#13a758);transform:translateY(-2px);box-shadow:0 16px 44px #14b56835,inset 0 1px 0 #b1f9cc80}
+.hero-buttons{gap:30px}.hero .text-link{font-size:14px}.hero-proof{margin-top:26px}
+.hero-content>.scene-note{font-size:10px;line-height:1.7;color:#b5b7bf;margin:16px 0 0;max-width:480px;letter-spacing:0}
+[data-theme=light] .hero-content>.scene-note{color:#6a6d75}
+/* No panning or alternating direction: every photo only moves forward in scale. */
+.hero-slide-image{transform-origin:center;transform:scale(1.015)}
+.hero-slide--car .hero-slide-image{object-position:center 58%}
+.about-carousel .hero-slide-image{object-position:center 65%}
+.hero-slide.is-active .hero-slide-image,.hero-slide.is-leaving .hero-slide-image{animation:image-slow-zoom 12s linear both}
+.faq-visual>img,.request-banner>img{animation:image-slow-zoom 24s linear both;transform-origin:center;opacity:.8}
+.vehicle-image img{transition:transform 1.8s cubic-bezier(.2,.65,.3,1)}
+.vehicle-card:hover img{transform:scale(1.035)}
+.request-banner{min-height:350px;border:1px solid var(--glass-edge);box-shadow:var(--module-shadow)}
+.request-banner>div{max-width:600px}.request-banner:after{background:linear-gradient(90deg,#181a20f7 5%,#181a20da 42%,#181a2026 100%)}
+.request-banner .find-car{min-width:250px;min-height:72px;padding:18px 30px;font-size:21px;gap:34px}
+.faq-visual{box-shadow:var(--module-shadow);border:1px solid var(--glass-edge)}
+.faq-visual>div{bottom:20px;left:20px;right:20px;padding:25px 24px;border-radius:22px;background:linear-gradient(145deg,#252831ab,#171a22a8);border:1px solid #ffffff26;box-shadow:inset 0 1px 0 #ffffff18;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.faq-visual:after{background:linear-gradient(0deg,#101214b0 0%,#10121408 85%)}
+.faq-visual h2{font-size:29px}.faq-visual p{font-size:11px;letter-spacing:0}
+.faq-copy details{padding-inline:16px;border:1px solid transparent;border-bottom-color:var(--line);border-radius:14px}
+.faq-copy details[open]{background:var(--module-glass),var(--module-base);border-color:var(--glass-edge);box-shadow:inset 0 1px 0 var(--glass-highlight);margin-block:5px}
+.faq-copy summary{font-size:14px}.faq-copy details p{font-size:13px}
+[data-theme=light] .request-banner:after{background:linear-gradient(90deg,#f5f5f7fa 5%,#f5f5f7e8 42%,#f5f5f730 100%)}
+[data-theme=light] .faq-visual:after{background:linear-gradient(0deg,#f5f5f7c0 0%,#ffffff08 85%)}
+[data-theme=light] .faq-visual>div{background:linear-gradient(145deg,#ffffffe0,#ffffffe8);border-color:#fff;box-shadow:0 12px 32px #30384c0b,inset 0 1px 0 #fff}
+/* The two example cards disclose both the fictional author and the example rating. */
+.customer-reviews{margin-top:72px}.review-top{display:flex;justify-content:space-between;align-items:center;gap:16px}.review{padding:34px}.review blockquote{font-size:15px;line-height:2;min-height:94px}.review-author{font-size:14px}.review-author small{display:block!important;font-size:11px;color:var(--muted);margin-top:4px}.review .demo-label{font-size:11px}.stars{font-size:23px;letter-spacing:5px}
+@media(min-width:701px){
+ [data-theme] .topbar.is-scrolled .header-actions{top:22px;right:28px;gap:12px;padding:12px;border-radius:28px}
+ [data-theme] .topbar.is-scrolled .social{display:flex;min-width:225px;min-height:82px;padding:18px 24px;gap:16px;justify-content:center;border-radius:20px}
+ [data-theme] .topbar.is-scrolled .social>svg{width:32px;height:32px}
+ [data-theme] .topbar.is-scrolled .social>span{font-size:20px;font-weight:600}
+ [data-theme] .topbar.is-scrolled .social small{display:block;font-size:12px;margin-top:5px}
+ [data-theme] .topbar.is-scrolled .social .tiny-arrow{display:block;font-size:21px;margin-left:8px;font-weight:400}
+}
+@media(min-width:701px) and (max-width:1000px){
+ [data-theme] .topbar.is-scrolled .social{min-width:180px;min-height:72px;padding:14px 18px}
+ [data-theme] .topbar.is-scrolled .social>span{font-size:18px}
+ .hero .find-car{min-width:270px;min-height:78px;font-size:23px}
+}
+@media(max-width:700px){
+ [data-theme] :is(.advantages-section .advantage,.brand-list button,.model-panel,.vehicle-card,.process-section .step,.review,.map-panel){backdrop-filter:blur(8px) saturate(125%);-webkit-backdrop-filter:blur(8px) saturate(125%)}
+ .hero .find-car{min-width:240px;min-height:70px;padding:18px 28px;font-size:22px;gap:40px;border-radius:19px;width:100%}
+ .hero .find-car svg{width:29px;height:29px}.hero-buttons{gap:8px}.hero .text-link{font-size:13px;min-height:42px}.hero-proof{margin-top:10px}
+ .hero-content>.scene-note{font-size:9px;margin-top:10px}.hero{min-height:960px}.hero-slideshow{height:290px;top:auto;bottom:25px}.hero-slide--car .hero-slide-image{object-position:center 58%}
+ [data-theme] .topbar.is-scrolled .social{min-height:54px;padding:10px 12px}
+ [data-theme] .topbar.is-scrolled .social>span{font-size:14px}
+ [data-theme] .topbar.is-scrolled .social>svg{width:24px;height:24px}
+ [data-theme] .topbar.is-scrolled .social small{font-size:10px}
+ .request-banner{min-height:390px;height:auto;padding:30px 25px}.request-banner .find-car{min-width:215px;min-height:66px;font-size:20px;padding:16px 24px}.request-banner .find-car svg{width:27px;height:27px}.request-banner p{max-width:260px}
+ .faq-visual>div{bottom:14px;left:14px;right:14px;padding:22px 18px}.faq-visual{min-height:450px}.faq-visual h2{font-size:25px}.faq-visual p{font-size:10px}
+ .review{padding:26px 23px}.review blockquote{font-size:14px;min-height:0}.review-top{gap:10px}.stars{font-size:20px;letter-spacing:3px}.review .demo-label{margin:0;font-size:10px}.customer-reviews{margin-top:40px}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+ [data-theme] :is(.advantage,.brand-list button,.model-panel,.vehicle-card,.step,.review,.map-panel,.language-menu){background:var(--panel)}
+ .faq-visual>div{background:#20232bf5}[data-theme=light] .faq-visual>div{background:#fffffff5}
+ [data-theme] .topbar.is-scrolled .header-actions{background:#f8fbff}
+}
+@media(prefers-reduced-motion:reduce){
+ .hero-slide-image,.faq-visual>img,.request-banner>img{animation:none!important;transform:none!important}
+ [data-theme] .topbar.is-scrolled .social,.topbar .social svg,.topbar .social span{transition:none!important}
+}
