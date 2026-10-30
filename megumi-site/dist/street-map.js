@@ -9,7 +9,7 @@
   tokyo:{point:[35.7311336556,139.7638928043],title:'惠澤株式会社 东京营业所'}
  };
  element.hidden=false;original.hidden=true;
- const map=L.map(element,{scrollWheelZoom:false,zoomControl:false,attributionControl:true}).setView(places.hq.point,17);
+ const map=L.map(element,{scrollWheelZoom:false,zoomControl:false,attributionControl:true}).setView(places.hq.point,16);
  L.control.zoom({position:'topright'}).addTo(map);
  map.attributionControl.setPrefix(false);
  const tiles=L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png',{
@@ -21,7 +21,7 @@
  marker.bindTooltip(places.hq.title,{permanent:true,direction:'top',offset:[0,-38],className:'company-map-label'});
  const update=()=>{
   const active=document.querySelector('[data-map].active').dataset.map;
-  const place=places[active];map.setView(place.point,17,{animate:false});marker.setLatLng(place.point);marker.setTooltipContent(place.title);
+  const place=places[active];map.setView(place.point,16,{animate:false});marker.setLatLng(place.point);marker.setTooltipContent(place.title);
   marker.options.title=place.title;const node=marker.getElement();if(node)node.title=place.title;
  };
  document.querySelectorAll('[data-map]').forEach(button=>button.addEventListener('click',()=>queueMicrotask(update)));
