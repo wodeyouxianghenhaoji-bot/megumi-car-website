@@ -1,0 +1,150 @@
+{
+  "verifiedOn": "2026-10-31",
+  "purpose": "Original manufacturer identifiers for the car-request selector; not an affiliation or manufacturer endorsement.",
+  "brands": [
+    {
+      "name": "Toyota",
+      "source": "https://brand.toyota.com/content/dam/brandhub/VIS_toyota_logo_horiz_black_RGB_2021.svg",
+      "file": "assets/brand-logos/toyota.svg",
+      "bytes": 3230,
+      "sha256": "880ef46b6b693612000447da498310f943e45741477864d7055bde51914e0fdc"
+    },
+    {
+      "name": "Lexus",
+      "source": "https://global.toyota/pages/contents/image/lexus_logo.svg",
+      "file": "assets/brand-logos/lexus.svg",
+      "bytes": 1766,
+      "sha256": "6aeee2cb04a713829e8816921231978a555ce36da1b7268aa46d29228f0b7bf3"
+    },
+    {
+      "name": "Honda",
+      "source": "https://www.honda.co.jp/honda-touch-icon.png",
+      "file": "assets/brand-logos/honda.png",
+      "bytes": 4027,
+      "sha256": "82f8a0f75782e1298f69c8259e6c800b08db5da0a02d646e75af398801ac02b3"
+    },
+    {
+      "name": "Nissan",
+      "source": "https://www.nissan-global.com/library/assets/img/hd_logo.svg",
+      "file": "assets/brand-logos/nissan.svg",
+      "bytes": 7102,
+      "sha256": "32aaf43cf757eb9f009328f9e832652f202ad01b2d66d168a9c0da3d0079afb2"
+    },
+    {
+      "name": "Mazda",
+      "source": "https://www.mazda.co.jp/etc.clientlibs/mazda-co-jp/clientlibs/clientlib-site/resources/images/mazdalogo_black.svg",
+      "file": "assets/brand-logos/mazda.svg",
+      "bytes": 2495,
+      "sha256": "75cd3a332bbdae4687fe50c04c8f97efb4d6289d8631a1de2d79a432519c8024"
+    },
+    {
+      "name": "Subaru",
+      "source": "https://www.subaru.co.jp/assets-ub/img/common/logo.webp",
+      "file": "assets/brand-logos/subaru.webp",
+      "bytes": 10898,
+      "sha256": "ce9e4505a0d9b8420dee1b5f9e17d40368062f6f7c1dd32c8030347bdf71c5f3"
+    },
+    {
+      "name": "Suzuki",
+      "source": "https://www.globalsuzuki.com/img/common/suzukiLogo.svg",
+      "file": "assets/brand-logos/suzuki.svg",
+      "bytes": 2177,
+      "sha256": "80ec61d3751391e0ee1c67f193da95e314094db8e455c703680c2651264a8b63"
+    },
+    {
+      "name": "Mitsubishi",
+      "source": "https://www.mitsubishi-motors.co.jp/apple-touch-icon.png",
+      "file": "assets/brand-logos/mitsubishi.png",
+      "bytes": 4984,
+      "sha256": "43c606fc27f25a7337b45963d0e7e7fb4857c842990bc3ba3f2d451913a123d9"
+    },
+    {
+      "name": "Daihatsu",
+      "source": "https://www.daihatsu.co.jp/com_parts/img/logo-l.png",
+      "file": "assets/brand-logos/daihatsu.webp",
+      "bytes": 1054,
+      "sha256": "4f5e69699cac0be70a586541627c3bf1e2378fa1eb926e795bee5533f0cfa6f8"
+    },
+    {
+      "name": "Mercedes-Benz",
+      "source": "https://www.mercedes-benz.com.cn/favicon.ico",
+      "file": "assets/brand-logos/mercedes-benz.ico",
+      "bytes": 15406,
+      "sha256": "4014d83afa033b767cd8d877c629181c00011df84b637a3e7dd9a568325d0608"
+    },
+    {
+      "name": "BMW",
+      "source": "https://www.bmw.com.cn/etc.clientlibs/ds2-webcomponents/clientlibs/clientlib/resources/img/BMW_Grey_Logo.svg",
+      "file": "assets/brand-logos/bmw.svg",
+      "bytes": 5015,
+      "sha256": "487c7bcaa73c77edbf8ee84fa6bcd150ca6c24d6a6de079fd3356d1b006999ef"
+    },
+    {
+      "name": "Audi",
+      "source": "https://static.audi.com/assets/images/frontend/rings18-2GJCA2FU.svg",
+      "file": "assets/brand-logos/audi.svg",
+      "bytes": 2662,
+      "sha256": "986af50cbf99734966508745c927745a828b45f14587c8231c87d96bfb68451b"
+    },
+    {
+      "name": "Porsche",
+      "source": "https://newsroom.porsche.com/.imaging/mte/porsche-templating-theme/teaser_720x406x2/dam/pnr/2023/Company/Porsche-Crest/Galerie-1/Wappen_neu1.jpg/jcr:content/Wappen_neu1.jpg",
+      "page": "https://newsroom.porsche.com/en_US/2023/company/porsche-new-crest-evolution-of-an-icon-32513.html",
+      "file": "assets/brand-logos/porsche.jpg",
+      "bytes": 115333,
+      "sha256": "44d7c17b8ded01b2a49328410922e6d9848c0c6d0e140ef9c9ac43f06a559183",
+      "method": "Unmodified official press photograph of the Porsche crest"
+    },
+    {
+      "name": "Volkswagen",
+      "source": "https://www.volkswagen.co.jp/etc.clientlibs/clientlibs/vwa-ngw18/ngw18-frontend/apps/resources/statics/favicons/apple-touch-icon.png",
+      "file": "assets/brand-logos/volkswagen.png",
+      "bytes": 12206,
+      "sha256": "d897ec2534af9d26a4e3bff81ef5d4c38ed0c03bd8bd65e03fa2db356c53de40"
+    },
+    {
+      "name": "Land Rover",
+      "source": "https://www.landroverusa.com/config/navigation/footer/_jcr_content/root/container/footercontainer/sub_footer/footer_subcontainer/image.coreimg.png/1785766954700/lr-logo---footer.png",
+      "file": "assets/brand-logos/land-rover.png",
+      "bytes": 1106,
+      "sha256": "f4d5e31c5573cd447d9e5d9e699fc15a3a971473f3c7e54865687d3ee2d52cbd"
+    },
+    {
+      "name": "Jeep",
+      "source": "https://www.jeep-japan.com/content/dam/cross-regional/apac/jeep/en_crossregional/global/header/logo-jeep.png",
+      "file": "assets/brand-logos/jeep.png",
+      "bytes": 5400,
+      "sha256": "573d01beb1decb68956fdf36c1d503b2848dc6681b68a8adb39d9f8a5e52a3b5"
+    },
+    {
+      "name": "Volvo",
+      "source": "https://www.volvocars.com/bimi-logo.svg",
+      "file": "assets/brand-logos/volvo.svg",
+      "bytes": 2049,
+      "sha256": "c97574fbb0627207d9ebf183d69b45f34e46ec5fbe8cf2223d52baca3c024dfb"
+    },
+    {
+      "name": "MINI",
+      "source": "https://www.miniusa.com/content/dam/mini/global-nav/mini-logo.svg",
+      "file": "assets/brand-logos/mini.svg",
+      "bytes": 1787,
+      "sha256": "9d3ae162eeb16896288b4f1f42c6eca1a94cf7d42fc4e6572770903248f48ac1"
+    },
+    {
+      "name": "Ferrari",
+      "source": "https://store.ferrari.com/en-us/cavallino/",
+      "fragment": "icon-ferrari-logo-black",
+      "file": "assets/brand-logos/ferrari.svg",
+      "bytes": 14085,
+      "sha256": "798d597ffa755706ca416bd2badf05e2a4f675f07fe559e0fb091af100a09300",
+      "method": "Original inline symbol paths copied without alteration into standalone SVG container"
+    },
+    {
+      "name": "Tesla",
+      "source": "https://www.tesla.cn/themes/custom/tesla_frontend/assets/favicons/favicon-196x196.png",
+      "file": "assets/brand-logos/tesla.png",
+      "bytes": 4455,
+      "sha256": "c82462c37d740922a2e4dd0f5cc8f4da3d1e646453cfb3c525fae4f34864a6fc"
+    }
+  ]
+}

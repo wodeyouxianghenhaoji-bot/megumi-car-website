@@ -48,7 +48,8 @@
         "Passo",
         "Wish"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/toyota.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Lexus",
@@ -75,7 +76,8 @@
         "SC",
         "LFA"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/lexus.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Honda",
@@ -110,7 +112,8 @@
         "Life",
         "Vamos"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/honda.png",
+      "logoSurface": "light"
     },
     {
       "name": "Nissan",
@@ -145,7 +148,8 @@
         "Safari",
         "Stagea"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/nissan.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Mazda",
@@ -176,7 +180,8 @@
         "Carol",
         "Scrum"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/mazda.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Subaru",
@@ -204,7 +209,8 @@
         "Chiffon",
         "Rex"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/subaru.webp",
+      "logoSurface": "light"
     },
     {
       "name": "Suzuki",
@@ -235,7 +241,8 @@
         "Kei",
         "e Vitara"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/suzuki.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Mitsubishi",
@@ -263,7 +270,8 @@
         "Colt",
         "Minicab"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/mitsubishi.png",
+      "logoSurface": "light"
     },
     {
       "name": "Daihatsu",
@@ -291,7 +299,8 @@
         "Sonica",
         "Naked"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/daihatsu.webp",
+      "logoSurface": "light"
     },
     {
       "name": "Mercedes-Benz",
@@ -328,7 +337,8 @@
         "CLK",
         "CL"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/mercedes-benz.ico",
+      "logoSurface": "light"
     },
     {
       "name": "BMW",
@@ -367,7 +377,8 @@
         "iX2",
         "iX3"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/bmw.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Audi",
@@ -404,7 +415,8 @@
         "RS 7",
         "RS Q3"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/audi.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Porsche",
@@ -427,7 +439,8 @@
         "928",
         "944"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/porsche.jpg",
+      "logoSurface": "light"
     },
     {
       "name": "Volkswagen",
@@ -454,7 +467,8 @@
         "Eos",
         "Volkswagen CC"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/volkswagen.png",
+      "logoSurface": "light"
     },
     {
       "name": "Land Rover",
@@ -471,7 +485,8 @@
         "Freelander",
         "Freelander 2"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/land-rover.png",
+      "logoSurface": "light"
     },
     {
       "name": "Jeep",
@@ -489,7 +504,8 @@
         "Patriot",
         "Grand Wagoneer"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/jeep.png",
+      "logoSurface": "dark"
     },
     {
       "name": "Volvo",
@@ -517,7 +533,8 @@
         "ES90",
         "XC40 Recharge"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/volvo.svg",
+      "logoSurface": "light"
     },
     {
       "name": "MINI",
@@ -533,7 +550,8 @@
         "Roadster",
         "Electric Cooper"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/mini.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Ferrari",
@@ -568,7 +586,8 @@
         "599 GTB Fiorano",
         "LaFerrari"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/ferrari.svg",
+      "logoSurface": "light"
     },
     {
       "name": "Tesla",
@@ -578,7 +597,8 @@
         "Model S",
         "Model X"
       ],
-      "logo": null
+      "logo": "assets/brand-logos/tesla.png",
+      "logoSurface": "light"
     }
   ]
 }

@@ -1,4 +1,4 @@
-﻿/* Every selector is scoped to the new panel. Existing pages and controls retain their styles. */
+/* Every selector is scoped to the new panel. Existing pages and controls retain their styles. */
 #smart-finder.sf{
  position:fixed;z-index:99;top:var(--sf-top,140px);right:var(--sf-right,28px);
  width:var(--sf-width,486px);max-width:calc(100vw - 20px);max-height:var(--sf-max-height,70dvh);
@@ -25,13 +25,11 @@
 #smart-finder .sf-section{border-bottom:1px solid #ffffff12}
 #smart-finder .sf-section:last-child{border-bottom:0}
 #smart-finder .sf-choice{display:flex;align-items:center;gap:13px;min-height:76px;width:100%;padding:15px 6px;background:transparent;text-align:start}
-#smart-finder .sf-number{flex-shrink:0;display:grid;place-items:center;border:1px solid #ffffff1a;border-radius:11px;width:34px;height:34px;font-size:11px;color:#b4b7be;background:linear-gradient(135deg,#ffffff0b,#ffffff03);font-variant-numeric:tabular-nums}
 #smart-finder .sf-choice-copy{flex:1;min-width:0}
 #smart-finder .sf-choice-copy strong{display:block;font-size:15px;font-weight:600;line-height:1.45;letter-spacing:0}
 #smart-finder .sf-choice-copy small{display:block;font-size:10px;line-height:1.6;color:#9699a2;margin-top:3px}
 #smart-finder .sf-chevron{flex-shrink:0;font-size:22px;font-weight:300;color:#aaadb5;transition:transform .3s}
 #smart-finder .sf-choice[aria-expanded=true] .sf-chevron{transform:rotate(45deg);color:#f5f5f7}
-#smart-finder .sf-choice[aria-expanded=true] .sf-number{border-color:#85baff55;color:#a9ceff;background:#6fa7eb14}
 #smart-finder .sf-fold{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .35s cubic-bezier(.22,1,.36,1),opacity .25s,visibility .35s}
 #smart-finder .sf-fold[data-open=true]{grid-template-rows:1fr;opacity:1;visibility:visible}
 #smart-finder .sf-fold-inner{min-height:0;overflow:hidden}
@@ -67,7 +65,6 @@
 #smart-finder .sf-types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 #smart-finder .sf-type{display:flex;align-items:center;gap:9px;text-align:start;padding:12px 10px;min-height:58px;background:#ffffff06;border:1px solid #ffffff20;border-radius:13px}
 #smart-finder .sf-type>span:nth-child(2){font-size:12px;line-height:1.5;flex:1}
-#smart-finder .sf-type-number{color:#8d949f;font-size:9px}
 #smart-finder .sf-type-check{font-size:16px;color:#9ba9ba}
 #smart-finder .sf-type-result{margin-top:15px}
 #smart-finder .sf-amount{margin:14px 0 18px}
@@ -116,3 +113,59 @@
 }
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){#smart-finder.sf{background:#18191c}}
 @media(prefers-reduced-motion:reduce){#smart-finder .sf-fold,#smart-finder .sf-chevron{transition:none}}
+/* Readability refinement: independent routes, bright brand cards, distinct category surfaces. */
+#smart-finder.sf{background:linear-gradient(150deg,#303238f8,#1d2026fa 65%);border-color:#ffffff38;box-shadow:0 20px 60px #0006,inset 0 1px 0 #ffffff25}
+#smart-finder .sf-heading{padding:20px 21px 17px;background:linear-gradient(135deg,#ffffff0c,#ffffff02)}
+#smart-finder .sf-heading h2{font-size:23px;letter-spacing:0;color:#fff}
+#smart-finder .sf-heading p{font-size:12px;line-height:1.8;color:#d0d5de;max-width:370px}
+#smart-finder .sf-section{border-bottom:0;margin:11px 0;border-radius:17px;border:1px solid #ffffff20;overflow:hidden;background:#ffffff04}
+#smart-finder .sf-choice{padding:15px 13px;gap:12px;min-height:78px;background:#ffffff05}
+#smart-finder .sf-choice[data-sf-toggle=brand]{background:linear-gradient(120deg,#7cb7ff20,#5d87c908)}
+#smart-finder .sf-choice[data-sf-toggle=type]{background:linear-gradient(120deg,#80d8c91a,#3c796c0b)}
+#smart-finder .sf-choice[data-sf-toggle=budget]{background:linear-gradient(120deg,#e3bd7b20,#8f6c350a)}
+#smart-finder .sf-mark{display:grid;place-items:center;flex-shrink:0;width:38px;height:38px;border:1px solid #a1caff55;border-radius:12px;background:#8abfff1c;color:#c2e0ff;font-size:22px;font-weight:500;line-height:1}
+#smart-finder [data-sf-toggle=type] .sf-mark{background:#7dd9bd18;border-color:#96dfc745;color:#b4f5e2}
+#smart-finder [data-sf-toggle=budget] .sf-mark{background:#f0c77e19;border-color:#f0d29b48;color:#ffe0a6;font-size:20px}
+#smart-finder .sf-choice-copy strong{font-size:17px;color:#fff;line-height:1.5}
+#smart-finder .sf-choice-copy small{font-size:12px;color:#c1c8d3;line-height:1.6}
+#smart-finder .sf-choice[aria-expanded=true]{box-shadow:inset 0 -1px 0 #ffffff18}
+#smart-finder .sf-content{padding:16px 12px 18px;background:linear-gradient(155deg,#b5c7de0a,#ffffff03)}
+#smart-finder .sf-label{font-size:13px;color:#e0e5ed;font-weight:500}
+#smart-finder .sf-brands{gap:8px}
+#smart-finder .sf-brand{min-height:75px;padding:12px 5px;background:linear-gradient(145deg,#fff,#e8edf3);border:1px solid #fff;color:#182130;box-shadow:0 3px 8px #00000015,inset 0 1px 0 #fff;gap:7px}
+#smart-finder .sf-brand span{font-size:13px;font-weight:600;color:#182130;line-height:1.5}
+#smart-finder .sf-brand:hover{background:#fff;border-color:#99cfff;box-shadow:0 0 0 2px #99cfff70}
+#smart-finder .sf-note{font-size:12px;color:#c8d0db;line-height:1.85}
+#smart-finder .sf-model{background:#ffffff0c;border-color:#ffffff2e;padding:13px;min-height:49px}
+#smart-finder .sf-model span:first-child{font-size:13px;color:#f6f8fc}
+#smart-finder .sf-field{font-size:12px;color:#d0d8e4}
+#smart-finder .sf-input{background:#11182099;border-color:#d0e5ff45;color:#fff;font-size:14px}
+#smart-finder .sf-input::placeholder{color:#acb7c7}
+#smart-finder .sf-type{background:linear-gradient(135deg,#53998220,#a1e9d30a);border-color:#c1e8da35}
+#smart-finder .sf-type>span:nth-child(2){font-size:13px;color:#f2fbf7}
+#smart-finder .sf-quick button{background:linear-gradient(135deg,#d1ac681c,#ffffff06);border-color:#e9d6ac40;font-size:13px}
+#smart-finder .sf-more,#smart-finder .sf-back{color:#b6dcff;font-size:12px}
+#smart-finder .sf-other{font-size:12px;color:#e0e6f0}
+#smart-finder .sf-footer{background:#1118209c;border-top-color:#ffffff25;padding:13px 20px}
+#smart-finder .sf-direct{font-size:12px;color:#badeff}
+#smart-finder .sf-reset{font-size:11px;color:#bec8d7}
+#smart-finder .sf-range-ends{font-size:11px;color:#c1c8d1}
+#smart-finder .sf-amount>span{color:#c2cbd8;font-size:12px}
+@media(max-width:700px){
+ #smart-finder .sf-heading h2{font-size:21px}
+ #smart-finder .sf-heading p{font-size:11px}
+ #smart-finder .sf-choice-copy strong{font-size:16px}
+ #smart-finder .sf-choice-copy small{font-size:11px}
+ #smart-finder .sf-brand{min-height:71px}
+ #smart-finder .sf-brand span{font-size:13px}
+ #smart-finder .sf-input{font-size:16px}
+}
+#smart-finder .sf-brand{min-height:94px;grid-template-rows:44px auto;align-content:center;gap:8px;padding:11px 5px}
+#smart-finder .sf-logo-box{display:flex;align-items:center;justify-content:center;justify-self:center;width:100%;max-width:76px;height:44px;overflow:hidden;border-radius:8px;background:transparent}
+#smart-finder .sf-logo-box img{display:block;object-fit:contain;width:100%;height:100%;max-width:100%;max-height:100%;filter:none;transform:none}
+#smart-finder .sf-logo-box[data-logo-surface=dark]{background:#202328;padding:5px}
+#smart-finder .sf-brand>span[dir=ltr]{font-size:12px;line-height:1.5;color:#182130}
+@media(max-width:700px){#smart-finder .sf-brand{min-height:95px}#smart-finder .sf-brand>span[dir=ltr]{font-size:13px}}
+#smart-finder .sf-brand>span[dir=ltr]{font-size:13px}
+/* Keep the three alternative routes reachable while the expanded choices scroll. */
+#smart-finder .sf-fold .sf-fold-inner{max-height:max(170px,calc(var(--sf-max-height,740px) - 435px));overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a8b4c24d transparent}

@@ -11,7 +11,7 @@
  const matchLanguage=value=>{const code=String(value||'').replace('_','-').toLowerCase().split('-')[0];return Object.hasOwn(messages,code)?code:null};
  function initialLanguage(){const saved=matchLanguage(readPref());if(saved)return saved;for(const value of navigator.languages||[navigator.language]){const language=matchLanguage(value);if(language)return language}return 'en'}
  let language=initialLanguage(),brands=[],loadFailed=false;
- const state={open:null,minimized:false,brand:null,model:'',query:'',custom:false,customValue:'',all:false,type:null,typeBrand:'',budget:30000};
+ const state={open:'brand',minimized:false,brand:null,model:'',query:'',custom:false,customValue:'',all:false,type:null,typeBrand:'',budget:30000};
  const typeCodes=['SUV','Sedan','MPV','Hatchback','Coupe','Pickup','Van'];
  const quickBudgets=[5000,10000,25000,50000,100000,200000];
  const t=()=>messages[language];
@@ -29,9 +29,9 @@
  }
  function updateLink(element,message){const href=whatsapp(message);if(href)element.href=href;else element.removeAttribute('href')}
  function brandButton(brand){
-  // Logo files remain null until commercial usage for this site is verified.
-  // This is ordinary text, never a recreation of a wordmark or emblem.
-  return `<button type="button" class="sf-brand" data-sf-brand="${esc(brand.name)}"><span dir="ltr">${esc(brand.name)}</span></button>`;
+  const logo=typeof brand.logo==='string'&&/^assets\/brand-logos\/[a-z0-9-]+\.(svg|png|webp|ico|jpg)$/.test(brand.logo)?brand.logo:null;
+  const image=logo?`<span class="sf-logo-box" data-logo-surface="${brand.logoSurface==='dark'?'dark':'light'}"><img src="${esc(logo)}" alt="" aria-hidden="true" width="66" height="40" decoding="async" loading="lazy"></span>`:'';
+  return `<button type="button" class="sf-brand" data-sf-brand="${esc(brand.name)}">${image}<span dir="ltr">${esc(brand.name)}</span></button>`;
  }
  function renderBrand(){
   const stage=root.querySelector('[data-sf-brand-stage]');
@@ -52,7 +52,7 @@
  }
  function typeMessage(){return format(t().typeMessage,{type:t().types[typeCodes.indexOf(state.type)],brand:state.typeBrand||t().anyBrand})}
  function renderTypes(){
-  root.querySelector('[data-sf-type-stage]').innerHTML=`<p class="sf-label">${esc(t().selectType)}</p><div class="sf-types">${typeCodes.map((code,i)=>`<button type="button" class="sf-type" data-sf-type="${code}" aria-pressed="${state.type===code}"><span class="sf-type-number" aria-hidden="true">0${i+1}</span><span>${esc(t().types[i])}</span><span class="sf-type-check" aria-hidden="true">${state.type===code?'✓':'+'}</span></button>`).join('')}</div>${state.type?`<label class="sf-field" for="sf-type-brand">${esc(t().optionalBrand)}</label><select id="sf-type-brand" class="sf-input"><option value="">${esc(t().anyBrand)}</option>${brands.map(brand=>`<option value="${esc(brand.name)}" ${brand.name===state.typeBrand?'selected':''}>${esc(brand.name)}</option>`).join('')}</select><div class="sf-type-result">${link(typeMessage())}</div>`:''}`;
+  root.querySelector('[data-sf-type-stage]').innerHTML=`<p class="sf-label">${esc(t().selectType)}</p><div class="sf-types">${typeCodes.map((code,i)=>`<button type="button" class="sf-type" data-sf-type="${code}" aria-pressed="${state.type===code}"><span>${esc(t().types[i])}</span><span class="sf-type-check" aria-hidden="true">${state.type===code?'✓':'+'}</span></button>`).join('')}</div>${state.type?`<label class="sf-field" for="sf-type-brand">${esc(t().optionalBrand)}</label><select id="sf-type-brand" class="sf-input"><option value="">${esc(t().anyBrand)}</option>${brands.map(brand=>`<option value="${esc(brand.name)}" ${brand.name===state.typeBrand?'selected':''}>${esc(brand.name)}</option>`).join('')}</select><div class="sf-type-result">${link(typeMessage())}</div>`:''}`;
  }
  function budgetMessage(){return format(t().budgetMessage,{budget:amount(state.budget)})}
  function renderBudget(){
@@ -70,9 +70,10 @@
  }
  function build(){
   root.lang=language;root.dir=language==='ar'?'rtl':'ltr';root.dataset.minimized=String(state.minimized);
-  root.innerHTML=`<div class="sf-heading"><div><h2 id="sf-title">${esc(t().title)}</h2><p>${esc(t().intro)}</p></div><button type="button" id="sf-minimize" aria-label="${esc(state.minimized?t().expand:t().minimize)}" aria-expanded="${!state.minimized}">${state.minimized?'+':'−'}</button></div><div class="sf-body" ${state.minimized?'hidden':''}>${[['brand','01',t().brand,t().brandSub],['type','02',t().type,t().typeSub],['budget','03',t().budget,t().budgetSub]].map(([id,number,label,subtitle])=>`<section class="sf-section"><h3><button type="button" class="sf-choice" id="sf-toggle-${id}" data-sf-toggle="${id}" aria-controls="sf-panel-${id}" aria-expanded="false"><span class="sf-number" aria-hidden="true">${number}</span><span class="sf-choice-copy"><strong>${esc(label)}</strong><small>${esc(subtitle)}</small></span><span class="sf-chevron" aria-hidden="true">+</span></button></h3><div class="sf-fold" id="sf-panel-${id}" data-sf-panel="${id}" data-open="false" aria-hidden="true" inert><div class="sf-fold-inner"><div class="sf-content" data-sf-${id}-stage></div></div></div></section>`).join('')}</div><div class="sf-footer" ${state.minimized?'hidden':''}>${link(t().directMessage,t().direct,'sf-direct')}<button type="button" class="sf-reset" data-sf-reset>${esc(t().reset)}</button></div>`;
+  root.innerHTML=`<div class="sf-heading"><div><h2 id="sf-title">${esc(t().title)}</h2><p>${esc(t().intro)}</p></div><button type="button" id="sf-minimize" aria-label="${esc(state.minimized?t().expand:t().minimize)}" aria-expanded="${!state.minimized}">${state.minimized?'+':'−'}</button></div><div class="sf-body" ${state.minimized?'hidden':''}>${[['brand','▦',t().brand,t().brandSub],['type','◇',t().type,t().typeSub],['budget','$',t().budget,t().budgetSub]].map(([id,mark,label,subtitle])=>`<section class="sf-section"><h3><button type="button" class="sf-choice" id="sf-toggle-${id}" data-sf-toggle="${id}" aria-controls="sf-panel-${id}" aria-expanded="false"><span class="sf-mark" aria-hidden="true">${mark}</span><span class="sf-choice-copy"><strong>${esc(label)}</strong><small>${esc(subtitle)}</small></span><span class="sf-chevron" aria-hidden="true">+</span></button></h3><div class="sf-fold" id="sf-panel-${id}" data-sf-panel="${id}" data-open="false" aria-hidden="true" inert><div class="sf-fold-inner"><div class="sf-content" data-sf-${id}-stage></div></div></div></section>`).join('')}</div><div class="sf-footer" ${state.minimized?'hidden':''}>${link(t().directMessage,t().direct,'sf-direct')}<button type="button" class="sf-reset" data-sf-reset>${esc(t().reset)}</button></div>`;
   renderBrand();renderTypes();renderBudget();updateAccordion();position();
  }
+ root.addEventListener('error',event=>{if(event.target.matches('.sf-logo-box img'))event.target.closest('.sf-logo-box').hidden=true},true);
  root.addEventListener('click',event=>{
   const button=event.target.closest('button');if(!button||!root.contains(button))return;
   if(button.id==='sf-minimize'){state.minimized=!state.minimized;root.dataset.minimized=String(state.minimized);root.querySelector('.sf-body').hidden=state.minimized;root.querySelector('.sf-footer').hidden=state.minimized;button.textContent=state.minimized?'+':'−';button.setAttribute('aria-label',state.minimized?t().expand:t().minimize);button.setAttribute('aria-expanded',!state.minimized);position()}
@@ -108,7 +109,7 @@
  if('ResizeObserver' in window)new ResizeObserver(position).observe(dock);
  window.addEventListener('resize',position,{passive:true});window.visualViewport?.addEventListener('resize',position,{passive:true});
  build();
- fetch('finder-data.json').then(response=>{if(!response.ok)throw Error('catalogue');return response.json()}).then(data=>{
+ fetch('finder-data.json?v=2').then(response=>{if(!response.ok)throw Error('catalogue');return response.json()}).then(data=>{
   if(!Array.isArray(data.brands)||data.brands.length!==20||data.brands.some(brand=>typeof brand.name!=='string'||!Array.isArray(brand.models)||brand.models.some(model=>typeof model!=='string')))throw Error('catalogue');
   brands=data.brands;renderBrand();renderTypes();
  }).catch(()=>{loadFailed=true;renderBrand()});
