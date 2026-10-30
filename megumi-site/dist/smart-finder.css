@@ -224,3 +224,35 @@
 }
 
 [data-theme=light] #smart-finder.sf{background:linear-gradient(145deg,#ffffff14,#ffffff03 60%),#111824cf}
+/* Larger Siri-like light volume: no hard circular rim or outline in the normal state. */
+#smart-finder-launcher.sf-launcher,
+#smart-finder-launcher.sf-launcher[aria-expanded=true],
+[data-theme=light] #smart-finder-launcher.sf-launcher{
+ width:120px;height:120px;border:0;background:transparent;box-shadow:none;
+ backdrop-filter:none;-webkit-backdrop-filter:none;overflow:visible;
+}
+#smart-finder-launcher::after{display:none}
+#smart-finder-launcher::before{
+ inset:0;box-shadow:none;border:0;opacity:.5;
+ background:radial-gradient(ellipse at 34% 25%,#ffffff75,transparent 50%);
+ -webkit-mask-image:radial-gradient(circle,#000 40%,transparent 71%);mask-image:radial-gradient(circle,#000 40%,transparent 71%);
+}
+#smart-finder-launcher .sf-orb-glow{
+ inset:-13%;opacity:1;border-radius:50%;overflow:hidden;
+ background:radial-gradient(circle,#6881ae33 0%,#88b6dd1a 40%,transparent 68%);
+ -webkit-mask-image:radial-gradient(circle,#000 38%,#000d 48%,#0006 60%,transparent 71%);
+ mask-image:radial-gradient(circle,#000 38%,#000d 48%,#0006 60%,transparent 71%);
+}
+#smart-finder-launcher .sf-orb-glow::before{filter:blur(10px)}
+#smart-finder-launcher .sf-orb-glow::after{filter:blur(6px)}
+#smart-finder-launcher .sf-orb-label{
+ max-width:108px;background:transparent;padding:8px 4px;font-size:22px;line-height:1.35;
+ font-weight:650;letter-spacing:.06em;text-shadow:0 2px 9px #102541c9;
+}
+[data-theme=light] #smart-finder-launcher .sf-orb-label{background:transparent;color:#14223c;text-shadow:0 1px 8px #ffffffb3}
+@media(max-width:700px){
+ #smart-finder-launcher.sf-launcher,
+ #smart-finder-launcher.sf-launcher[aria-expanded=true],
+ [data-theme=light] #smart-finder-launcher.sf-launcher{width:100px;height:100px}
+ #smart-finder-launcher .sf-orb-label{font-size:20px;max-width:90px}
+}

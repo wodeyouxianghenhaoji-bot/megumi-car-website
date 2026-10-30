@@ -133,18 +133,28 @@
   const width=viewport?.width||window.innerWidth,height=viewport?.height||window.innerHeight;
   const mobile=width<=700,floating=header.classList.contains('is-scrolled');
   launcher.hidden=!mobile&&!floating;
+  const dockRect=dock.getBoundingClientRect(),contactRect=dock.querySelector('.whatsapp')?.getBoundingClientRect();
+  const anchor=contactRect?.width?contactRect:dockRect;
+  const orbSize=mobile?100:120;
+  const anchorCenter=anchor.left+anchor.width/2;
+  const center=Math.max(orbSize/2+12,Math.min(width-orbSize/2-12,anchorCenter));
+  const orbTop=Math.max(12,anchor.bottom+(mobile?12:16));
   const keyboardInset=Math.max(0,window.innerHeight-height-(viewport?.offsetTop||0));
+  launcher.style.setProperty('--sf-orb-right',`${width-center-orbSize/2}px`);
+  launcher.style.setProperty('--sf-orb-top',`${orbTop}px`);
+  launcher.style.setProperty('--sf-orb-bottom','auto');
   if(mobile){
-   launcher.style.setProperty('--sf-orb-right','16px');launcher.style.setProperty('--sf-orb-top','auto');launcher.style.setProperty('--sf-orb-bottom',`calc(${18+keyboardInset}px + env(safe-area-inset-bottom,0px))`);
-   root.style.setProperty('--sf-width',`${width-24}px`);root.style.setProperty('--sf-right','12px');root.style.setProperty('--sf-top','auto');root.style.setProperty('--sf-bottom',`calc(${104+keyboardInset}px + env(safe-area-inset-bottom,0px))`);root.style.setProperty('--sf-max-height',`${Math.max(100,Math.min(620,height-128))}px`);root.dataset.placement='bottom';
+   root.style.setProperty('--sf-width',`${width-24}px`);root.style.setProperty('--sf-right','12px');root.style.setProperty('--sf-top','auto');root.style.setProperty('--sf-bottom',`calc(${16+keyboardInset}px + env(safe-area-inset-bottom,0px))`);root.style.setProperty('--sf-max-height',`${Math.max(100,Math.min(620,height-orbTop-orbSize-28))}px`);root.dataset.placement='bottom';
   }else{
-   const rect=dock.getBoundingClientRect(),right=Math.max(12,width-rect.right),orbTop=Math.max(0,rect.bottom)+14;
-   launcher.style.setProperty('--sf-orb-right',`${right}px`);launcher.style.setProperty('--sf-orb-top',`${orbTop}px`);launcher.style.setProperty('--sf-orb-bottom','auto');
-   root.style.setProperty('--sf-width',`${Math.min(Math.max(rect.width,340),540,width-24)}px`);root.style.setProperty('--sf-right',`${right}px`);root.style.setProperty('--sf-top',`${orbTop+84}px`);root.style.setProperty('--sf-bottom','auto');root.style.setProperty('--sf-max-height',`${Math.max(100,height-orbTop-100)}px`);root.dataset.placement='top';
+   const right=Math.max(12,width-dockRect.right),panelTop=orbTop+orbSize+12;
+   root.style.setProperty('--sf-width',`${Math.min(Math.max(dockRect.width,340),540,width-24)}px`);root.style.setProperty('--sf-right',`${right}px`);root.style.setProperty('--sf-top',`${panelTop}px`);root.style.setProperty('--sf-bottom','auto');root.style.setProperty('--sf-max-height',`${Math.max(100,height-panelTop-16)}px`);root.dataset.placement='top';
   }
   if(launcher.hidden){closePanel(false,true);return}
   if(!panelOpen&&root.dataset.revealed!=='true')root.hidden=true;
  }
+ // Before the mobile header docks, follow the actual WhatsApp button as it scrolls.
+ let anchorFrame=false;
+ window.addEventListener('scroll',()=>{if(window.innerWidth<=700&&!header.classList.contains('is-scrolled')&&!anchorFrame){anchorFrame=true;requestAnimationFrame(()=>{position();anchorFrame=false})}},{passive:true});
  new MutationObserver(position).observe(header,{attributes:true,attributeFilter:['class']});
  if('ResizeObserver' in window)new ResizeObserver(position).observe(dock);
  window.addEventListener('resize',position,{passive:true});window.visualViewport?.addEventListener('resize',position,{passive:true});
