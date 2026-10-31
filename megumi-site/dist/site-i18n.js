@@ -87,8 +87,12 @@
  const blockSelectors=[['.hero h1','在日本寻找您的下一辆座驾'],['.about-copy h2','日本二手车寻找服务'],['.contact-heading h2','您的购车计划从一次对话开始']];
  blockSelectors.forEach(([selector,key])=>document.querySelector(selector).dataset.i18nBlock=key);
  window.MEGUMI_I18N={t,translate,match,choose,get language(){return language},get preference(){return preference},languages};
+ const header=document.querySelector('.topbar');
+ const reserveHeaderSpace=()=>{if(window.innerWidth<=700&&!header.classList.contains('is-scrolled')){const height=header.getBoundingClientRect().height;if(height>0)document.documentElement.style.setProperty('--mobile-header-height',Math.ceil(height)+'px')}};
+ if('ResizeObserver' in window)new ResizeObserver(reserveHeaderSpace).observe(header);
+ window.addEventListener('resize',reserveHeaderSpace,{passive:true});window.addEventListener('megumi:languagechange',()=>requestAnimationFrame(reserveHeaderSpace));
  document.addEventListener('click',event=>{const option=event.target.closest('#language-menu [data-lang]');if(option){choose(option.dataset.lang);document.querySelector('#language-menu').hidden=true;document.querySelector('#language-toggle').setAttribute('aria-expanded','false')}});
  window.addEventListener('languagechange',()=>{if(preference==='auto'){language=detect();apply()}});
  window.addEventListener('storage',event=>{if(event.key==='megumi-language-choice'){preference=event.newValue||'auto';language=preference==='auto'?detect():match(preference)||detect();apply()}});
- apply();started=true;observe();
+ apply();started=true;observe();reserveHeaderSpace();
 })();
