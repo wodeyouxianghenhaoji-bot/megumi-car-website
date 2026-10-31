@@ -1,6 +1,6 @@
 /* Requested corrections only: logo crop, contact glass and clear centered choices. */
-.topbar .brand-mark{flex-shrink:0;overflow:hidden;background:#fff}
-.topbar .brand-mark img{display:block!important;width:auto!important;height:100%!important;max-width:none!important;object-fit:contain!important}
+.brand-mark{position:relative;direction:ltr;flex-shrink:0;overflow:hidden;background:#fff}
+.brand-mark img{position:absolute;left:0;right:auto;top:0;display:block!important;width:auto!important;height:100%!important;max-width:none!important;object-fit:contain!important}
 [data-theme] .topbar.is-scrolled .header-actions{
  --liquid-ink:var(--text);--liquid-secondary:var(--muted);
  background:linear-gradient(125deg,#ffffff16,#ffffff04 48%,#ffffff0c)!important;
