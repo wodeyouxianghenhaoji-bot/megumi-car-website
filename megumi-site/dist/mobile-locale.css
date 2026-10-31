@@ -1,0 +1,109 @@
+/* Localization, bidirectional text, and the focused finder dialog. */
+.currency-settings{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 24px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.currency-settings label{font-size:14px}
+.currency-settings select{max-width:100%;min-width:160px;min-height:46px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font-size:16px}
+.currency-settings button{min-height:46px;padding:10px 16px;border:1px solid var(--line);border-radius:10px}
+.currency-settings :is(p,a){flex-basis:100%;margin:0;font-size:12px;line-height:1.7;color:var(--muted)}
+.currency-settings a{text-decoration:underline}
+.vehicle-specs>div:has([data-price-jpy]){grid-column:1 / -1}
+.converted-prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;font-size:14px}
+.converted-price{background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.converted-price small{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin-bottom:6px}
+.converted-price strong{display:block;font-size:clamp(17px,2vw,24px);font-variant-numeric:tabular-nums;line-height:1.4;overflow-wrap:anywhere}
+.detail-specs>div:has([data-price-jpy]){grid-column:1 / -1;display:block}
+.detail-specs>div:has([data-price-jpy]) dt{margin-bottom:10px}
+html[dir=rtl] {font-family:Tahoma,Arial,sans-serif}
+html[dir=rtl] body{font-family:Tahoma,Arial,sans-serif}
+html[dir=rtl] :is(h1,h2,h3,.eyebrow,.sf-orb-label){letter-spacing:normal!important}
+html[dir=rtl] :is(.hero-content,.about-copy,.contact-heading,.vehicle-body,.detail-copy){text-align:start}
+:is(a[href^="tel:"],a[href^="mailto:"],.contact-direct strong,.address-item p,#map-address,.leaflet-container){direction:ltr;unicode-bidi:isolate}
+html:not([lang^=zh]) .hero h1{font-size:clamp(36px,5.2vw,74px);line-height:1.18;overflow-wrap:break-word;max-width:13em}
+.language-menu{inset-inline-end:0;right:auto;min-width:240px;z-index:5}
+.language-menu button{min-height:46px;text-align:start}
+.language-menu small{margin-inline-start:auto;margin-left:0}
+.language-menu button[aria-current=true]{background:var(--raised)}
+#sf-backdrop{position:fixed;inset:0;z-index:199;background:#0009;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+#sf-backdrop[hidden]{display:none}
+body.finder-open{position:fixed;overflow:hidden;width:100%;overscroll-behavior:none}
+body.finder-open #smart-finder-launcher{visibility:hidden;pointer-events:none}
+#smart-finder.sf{z-index:200;background:#1b2029f7;max-height:var(--sf-max-height);grid-template-rows:auto minmax(0,1fr) auto}
+#smart-finder .sf-body{overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
+#smart-finder .sf-fold .sf-fold-inner{max-height:none;overflow:visible}
+#smart-finder .sf-fold:not([data-open=true]) .sf-fold-inner{overflow:hidden}
+#smart-finder .sf-heading{flex-shrink:0}
+#smart-finder .sf-footer{padding:8px 20px;background:#171c24}
+#smart-finder .sf-direct,#smart-finder .sf-reset{min-height:44px;font-size:13px}
+#smart-finder :is(.sf-brand,.sf-model,.sf-type,.sf-quick button,.sf-back,.sf-more,.sf-other){min-height:48px}
+#smart-finder :is(.sf-brand,.sf-model,.sf-type){touch-action:pan-y}
+#smart-finder .sf-brands{gap:10px}
+#smart-finder .sf-choice{min-height:88px;padding:16px 6px}
+#smart-finder .sf-choice-copy strong{font-size:17px}
+#smart-finder .sf-choice-copy small{font-size:13px;line-height:1.5}
+#smart-finder .sf-heading p,#smart-finder .sf-note{font-size:12px;line-height:1.65}
+#smart-finder .sf-field,#smart-finder .sf-label{font-size:14px}
+#smart-finder .sf-brand{min-height:78px}
+#smart-finder .sf-brand span,#smart-finder .sf-model span:first-child{font-size:13px}
+#smart-finder .sf-heading h2{font-size:22px}
+#smart-finder .sf-content{padding-bottom:24px}
+#smart-finder .sf-destination{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #ffffff20}
+#smart-finder .sf-destination label{flex-shrink:0;font-size:13px}
+#smart-finder .sf-destination select{min-width:0;flex:1;max-width:100%;min-height:48px;border:1px solid #ffffff30;border-radius:12px;background:#252b35;padding:10px;font-size:16px}
+@media(max-width:700px){
+ .topbar:not(.is-scrolled){height:auto!important;min-height:0!important;padding:14px!important;gap:14px!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;inset-inline:12px!important;border-radius:22px!important}
+ .topbar .brand{font-size:16px!important;gap:9px;min-width:0}
+ .topbar .brand-mark,.topbar .brand-mark img{width:32px;height:32px}
+ .topbar .brand small{font-size:8px}
+ .topbar:not(.is-scrolled) nav{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px!important;grid-row:3;width:100%;font-size:12px!important}
+ .topbar nav a{padding:8px 0;min-height:44px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.35;overflow-wrap:anywhere}
+ .topbar:not(.is-scrolled) .header-actions{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px!important;gap:8px!important;width:100%;position:static!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+ .topbar:not(.is-scrolled) .header-actions .whatsapp{grid-column:1;grid-row:2}
+ .topbar:not(.is-scrolled) .header-actions .instagram{grid-column:2 / 4;grid-row:2}
+ .topbar:not(.is-scrolled) #theme{grid-column:3;grid-row:1;width:44px!important;height:44px!important;min-height:44px!important}
+ .topbar:not(.is-scrolled) .language-wrap{grid-column:1 / 3;grid-row:1;justify-self:end}
+ .topbar:not(.is-scrolled) .language{height:44px!important;max-width:100%;font-size:13px!important;padding:8px 12px!important}
+ .topbar .social{min-width:0!important;min-height:48px!important;justify-content:center;gap:8px!important;padding:10px!important;border-radius:14px!important}
+ .topbar .social>span{font-size:14px!important;white-space:normal;line-height:1.4!important}
+ .topbar .social small,.topbar .tiny-arrow{display:none!important}
+ .topbar .social>svg{width:22px!important;height:22px!important}
+ .topbar.is-scrolled .header-actions{gap:8px!important;padding:8px!important;max-width:calc(100vw - 24px)!important;right:12px!important;left:12px!important;top:8px!important}
+ .hero-content{padding-top:32px!important}
+ .hero{min-height:660px!important}
+ html:not([lang^=zh]) .hero h1{font-size:clamp(34px,9vw,48px)!important;letter-spacing:-.5px;line-height:1.22}
+ .hero .find-car{min-width:0!important;width:100%;min-height:60px!important;font-size:22px!important;padding:16px 20px!important;gap:20px!important}
+ #smart-finder-launcher.sf-launcher,#smart-finder-launcher.sf-launcher[aria-expanded=true],[data-theme=light] #smart-finder-launcher.sf-launcher{width:64px;height:64px}
+ #smart-finder-launcher .sf-orb-label{font-size:15px;max-width:64px;padding:4px}
+ #smart-finder.sf{width:calc(100vw - 20px);border-radius:22px;max-height:var(--sf-max-height);font-size:15px}
+ #smart-finder .sf-heading{padding:16px;align-items:flex-start;gap:12px}
+ #smart-finder #sf-close{width:44px;height:44px;position:relative;z-index:1}
+ #smart-finder .sf-heading h2{font-size:21px}
+ #smart-finder .sf-heading p{font-size:13px;max-width:28em}
+ #smart-finder .sf-body{padding:0 14px;touch-action:pan-y;scroll-padding-block:16px}
+ #smart-finder .sf-choice{min-height:92px;gap:12px;padding:16px 0}
+ #smart-finder .sf-mark{width:44px;height:44px;flex:0 0 44px;font-size:24px;border-radius:14px}
+ #smart-finder .sf-choice-copy strong{font-size:17px;line-height:1.5}
+ #smart-finder .sf-choice-copy small{font-size:13px;margin-top:4px;white-space:normal}
+ #smart-finder .sf-brands{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+ #smart-finder .sf-logo-box{max-width:100%;height:36px}
+ #smart-finder :is(.sf-model-grid,.sf-types){grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ #smart-finder :is(.sf-model,.sf-type){min-height:58px;padding:12px;font-size:14px}
+ #smart-finder .sf-input{font-size:16px;min-height:50px}
+ #smart-finder .sf-cta{min-height:54px;font-size:16px}
+ #smart-finder .sf-footer{padding:6px 16px max(8px,env(safe-area-inset-bottom))}
+ #smart-finder .sf-note{font-size:12px}
+ #smart-finder .sf-quick button{font-size:14px;min-height:48px}
+ .contact-direct strong{overflow-wrap:anywhere}
+}
+@media(max-width:360px){#smart-finder .sf-brands{grid-template-columns:repeat(2,minmax(0,1fr))}#smart-finder .sf-types{grid-template-columns:1fr}}
+/* Keep mobile identity, theme and language on one row; contacts occupy their own row. */
+@media(max-width:700px){
+ .topbar:not(.is-scrolled){grid-template-columns:minmax(0,1fr) 44px auto!important;gap:10px 8px!important;padding:12px!important}
+ .topbar:not(.is-scrolled)>.brand{grid-column:1;grid-row:1;font-size:14px!important;letter-spacing:0!important}
+ .topbar:not(.is-scrolled) .header-actions{display:contents!important}
+ .topbar:not(.is-scrolled) #theme{grid-column:2!important;grid-row:1!important}
+ .topbar:not(.is-scrolled) .language-wrap{grid-column:3!important;grid-row:1!important;max-width:105px;min-width:0}
+ .topbar:not(.is-scrolled) .language{font-size:12px!important;max-width:105px;line-height:1.2;gap:6px;padding:8px!important}
+ .topbar:not(.is-scrolled) .whatsapp{grid-column:1!important;grid-row:2!important}
+ .topbar:not(.is-scrolled) .instagram{grid-column:2 / 4!important;grid-row:2!important}
+ .topbar:not(.is-scrolled) nav{grid-column:1 / -1;grid-row:3!important}
+ .topbar:not(.is-scrolled) .social>span{font-size:13px!important}
+}

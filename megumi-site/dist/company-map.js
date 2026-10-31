@@ -40,6 +40,6 @@
  };
  window.gm_authFailure=()=>{document.querySelector('#styled-map').hidden=true;document.querySelector('#map').hidden=false};
  const script=document.createElement('script');script.async=true;
- script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&callback=initCompanyMap&loading=async&language=zh-CN&region=JP';
+ script.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&callback=initCompanyMap&loading=async&language='+encodeURIComponent(document.documentElement.lang)+'&region=JP';
  document.head.append(script);
 })();

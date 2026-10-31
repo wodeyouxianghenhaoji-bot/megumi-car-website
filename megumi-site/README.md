@@ -1,3 +1,5 @@
+> 2026-10-31: [Mobile finder, 11 languages, local/USD prices and localized WhatsApp](MOBILE-LANGUAGES-PRICES-2026-10-31.md). This supersedes earlier Chinese-only and fixed exchange-rate notes.
+
 > 最新联系区域与透明小汽车更新：[CONTACT-UPDATE-2026-10-30.md](CONTACT-UPDATE-2026-10-30.md)。
 
 > 最新视觉与交互更新：[VISUAL-UPDATE-2026-10-30.md](VISUAL-UPDATE-2026-10-30.md)。

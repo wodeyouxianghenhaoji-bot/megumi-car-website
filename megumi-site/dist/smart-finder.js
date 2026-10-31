@@ -1,4 +1,4 @@
-/* Isolated finder. No mutations of existing navigation, contacts, theme or page content. */
+/* Focused finder dialog; shared locale and destination context preserve selections. */
 (() => {
  'use strict';
  const root=document.getElementById('smart-finder');
@@ -11,8 +11,17 @@
  const matchLanguage=value=>{const code=String(value||'').replace('_','-').toLowerCase().split('-')[0];return Object.hasOwn(messages,code)?code:null};
  function initialLanguage(){const saved=matchLanguage(readPref());if(saved)return saved;for(const value of navigator.languages||[navigator.language]){const language=matchLanguage(value);if(language)return language}return 'en'}
  let language=initialLanguage(),brands=[],loadFailed=false;
- const state={open:'brand',brand:null,model:'',query:'',custom:false,customValue:'',all:false,type:null,typeBrand:'',budget:30000};
+ const state={open:null,brand:null,model:'',query:'',custom:false,customValue:'',all:false,type:null,typeBrand:'',budget:30000};
  let panelOpen=false,pinned=false,hoverTimer,hideTimer,touchHandled=false;
+ let previousFocus=null,scrollPosition=0;
+ const backdrop=document.createElement('div');backdrop.id='sf-backdrop';backdrop.hidden=true;root.before(backdrop);
+ const background=[...document.body.children].filter(el=>!['SCRIPT','STYLE','SVG'].includes(el.tagName)&&el!==root&&el!==backdrop);
+ const savedInert=new Map();
+ function setModal(active){
+  if(active){previousFocus=document.activeElement;scrollPosition=window.scrollY;background.forEach(el=>{savedInert.set(el,el.inert);el.inert=true});document.body.style.top=`-${scrollPosition}px`;document.body.classList.add('finder-open');backdrop.hidden=false;root.setAttribute('aria-modal','true')}
+  else{background.forEach(el=>{el.inert=savedInert.get(el)||false});savedInert.clear();document.body.classList.remove('finder-open');document.body.style.top='';backdrop.hidden=true;root.setAttribute('aria-modal','false');window.scrollTo(0,scrollPosition)}
+ }
+ backdrop.addEventListener('click',()=>closePanel(true));
  const launcher=document.createElement('button');launcher.id='smart-finder-launcher';launcher.type='button';launcher.className='sf-launcher';launcher.setAttribute('aria-controls',root.id);launcher.setAttribute('aria-haspopup','dialog');launcher.setAttribute('aria-expanded','false');launcher.innerHTML='<span class="sf-orb-glow" aria-hidden="true"></span><span class="sf-orb-label"></span>';root.after(launcher);
  root.setAttribute('role','dialog');root.setAttribute('aria-modal','false');root.setAttribute('aria-hidden','true');root.inert=true;root.dataset.revealed='false';
  const typeCodes=['SUV','Sedan','MPV','Hatchback','Coupe','Pickup','Van'];
@@ -22,6 +31,7 @@
  const amount=value=>new Intl.NumberFormat(language,{maximumFractionDigits:0,numberingSystem:'latn'}).format(value);
  const budgetLabel=()=>new Intl.NumberFormat(language,{style:'currency',currency:'USD',currencyDisplay:'narrowSymbol',maximumFractionDigits:0,numberingSystem:'latn'}).format(state.budget);
  function whatsapp(message){
+  message=window.MEGUMI_CONTACT_CONTEXT?.message(message)||message;
   const configured=window.SITE_CONFIG?.whatsapp;
   if(!configured)return '';
   try{const url=/^https:\/\//i.test(configured)?new URL(configured):new URL('https://wa.me/'+configured.replace(/\D/g,''));if(url.protocol!=='https:'||!['wa.me','api.whatsapp.com','web.whatsapp.com'].includes(url.hostname))return '';url.searchParams.set('text',message);return url.href}catch{return ''}
@@ -73,8 +83,8 @@
  }
  function build(){
   root.lang=language;root.dir=language==='ar'?'rtl':'ltr';launcher.querySelector('.sf-orb-label').textContent=t().launcher;launcher.setAttribute('aria-label',t().expand);launcher.title=t().expand;
-  root.innerHTML=`<div class="sf-heading"><div><h2 id="sf-title">${esc(t().title)}</h2><p>${esc(t().intro)}</p></div><button type="button" id="sf-close" aria-label="${esc(t().close)}">×</button></div><div class="sf-body">${[['brand','▦',t().brand,t().brandSub],['type','◇',t().type,t().typeSub],['budget','$',t().budget,t().budgetSub]].map(([id,mark,label,subtitle])=>`<section class="sf-section"><h3><button type="button" class="sf-choice" id="sf-toggle-${id}" data-sf-toggle="${id}" aria-controls="sf-panel-${id}" aria-expanded="false"><span class="sf-mark" aria-hidden="true">${mark}</span><span class="sf-choice-copy"><strong>${esc(label)}</strong><small>${esc(subtitle)}</small></span><span class="sf-chevron" aria-hidden="true">+</span></button></h3><div class="sf-fold" id="sf-panel-${id}" data-sf-panel="${id}" data-open="false" aria-hidden="true" inert><div class="sf-fold-inner"><div class="sf-content" data-sf-${id}-stage></div></div></div></section>`).join('')}</div><div class="sf-footer">${link(t().directMessage,t().direct,'sf-direct')}<button type="button" class="sf-reset" data-sf-reset>${esc(t().reset)}</button></div>`;
-  renderBrand();renderTypes();renderBudget();updateAccordion();position();
+  root.innerHTML=`<div class="sf-heading"><div><h2 id="sf-title">${esc(t().title)}</h2><p>${esc(t().intro)}</p></div><button type="button" id="sf-close" aria-label="${esc(t().close)}">×</button></div><div class="sf-body"><div class="sf-destination"><label for="sf-destination" data-destination-label></label><select id="sf-destination" data-destination></select></div>${[['brand','▦',t().brand,t().brandSub],['type','◇',t().type,t().typeSub],['budget','$',t().budget,t().budgetSub]].map(([id,mark,label,subtitle])=>`<section class="sf-section"><h3><button type="button" class="sf-choice" id="sf-toggle-${id}" data-sf-toggle="${id}" aria-controls="sf-panel-${id}" aria-expanded="false"><span class="sf-mark" aria-hidden="true">${mark}</span><span class="sf-choice-copy"><strong>${esc(label)}</strong><small>${esc(subtitle)}</small></span><span class="sf-chevron" aria-hidden="true">+</span></button></h3><div class="sf-fold" id="sf-panel-${id}" data-sf-panel="${id}" data-open="false" aria-hidden="true" inert><div class="sf-fold-inner"><div class="sf-content" data-sf-${id}-stage></div></div></div></section>`).join('')}</div><div class="sf-footer">${link(t().directMessage,t().direct,'sf-direct')}<button type="button" class="sf-reset" data-sf-reset>${esc(t().reset)}</button></div>`;
+  renderBrand();renderTypes();renderBudget();updateAccordion();position();window.MEGUMI_CONTACT_CONTEXT?.render();
  }
  root.addEventListener('error',event=>{if(event.target.matches('.sf-logo-box img'))event.target.closest('.sf-logo-box').hidden=true},true);
  root.addEventListener('click',event=>{
@@ -90,65 +100,54 @@
   if(button.hasAttribute('data-sf-quick')){state.budget=Number(button.dataset.sfQuick);updateBudget()}
   if(button.hasAttribute('data-sf-reset')){Object.assign(state,{brand:null,model:'',query:'',custom:false,customValue:'',all:false,type:null,typeBrand:'',budget:30000});renderBrand();renderTypes();renderBudget()}
  });
- root.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closePanel(true)}});
+ root.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closePanel(true)}if(event.key==='Tab'){const items=[...root.querySelectorAll('button,a[href],input,select')].filter(el=>!el.closest('[inert],[hidden]')&&el.getClientRects().length);const first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}}});
  root.addEventListener('input',event=>{
   if(event.target.id==='sf-model-search'){state.query=event.target.value;state.model='';renderModelList();renderBrandResult()}
   if(event.target.id==='sf-custom-model'){state.customValue=event.target.value;renderBrandResult()}
   if(event.target.id==='sf-budget-slider'){state.budget=Math.max(5000,Math.min(200000,Number(event.target.value)||5000));updateBudget()}
  });
  root.addEventListener('change',event=>{if(event.target.id==='sf-type-brand'){state.typeBrand=brands.some(brand=>brand.name===event.target.value)?event.target.value:'';const anchor=root.querySelector('.sf-type-result a');if(anchor)updateLink(anchor,typeMessage())}});
- document.addEventListener('click',event=>{const option=event.target.closest('[data-lang]');if(option){const next=matchLanguage(option.dataset.lang);if(next&&next!==language){language=next;build()}}});
+ window.addEventListener('megumi:languagechange',event=>{const next=matchLanguage(event.detail.language);if(next&&next!==language){language=next;build()}});
+ const rebuildContext=()=>{const id=root.contains(document.activeElement)?document.activeElement.id:null;build();if(id)document.getElementById(id)?.focus({preventScroll:true})};
+ window.addEventListener('megumi:contextchange',rebuildContext);
+ window.addEventListener('megumi:currencychange',rebuildContext);
  window.addEventListener('storage',event=>{if(event.key==='megumi-preferred-language'){language=matchLanguage(event.newValue)||initialLanguage();build()}});
  function cancelHoverClose(){clearTimeout(hoverTimer)}
  function openPanel(pin=false,focus=false){
   cancelHoverClose();clearTimeout(hideTimer);if(launcher.hidden)return;
-  pinned=pinned||pin;panelOpen=true;root.hidden=false;root.inert=false;root.setAttribute('aria-hidden','false');launcher.setAttribute('aria-expanded','true');
+  if(!panelOpen)setModal(true);pinned=true;panelOpen=true;root.hidden=false;root.inert=false;root.setAttribute('aria-hidden','false');launcher.setAttribute('aria-expanded','true');
   position();requestAnimationFrame(()=>{if(panelOpen)root.dataset.revealed='true'});
-  if(focus)root.querySelector('#sf-close')?.focus({preventScroll:true});
+  root.querySelector('#sf-close')?.focus({preventScroll:true});
  }
  function closePanel(restoreFocus=false,immediate=false){
-  cancelHoverClose();clearTimeout(hideTimer);panelOpen=false;pinned=false;root.dataset.revealed='false';root.inert=true;root.setAttribute('aria-hidden','true');launcher.setAttribute('aria-expanded','false');
+  cancelHoverClose();clearTimeout(hideTimer);if(panelOpen)setModal(false);panelOpen=false;pinned=false;root.dataset.revealed='false';root.inert=true;root.setAttribute('aria-hidden','true');launcher.setAttribute('aria-expanded','false');
   if(immediate)root.hidden=true;else hideTimer=setTimeout(()=>{if(!panelOpen)root.hidden=true},240);
-  if(restoreFocus&&!launcher.hidden)launcher.focus({preventScroll:true});
+  if(restoreFocus)(previousFocus?.isConnected?previousFocus:launcher).focus({preventScroll:true});
  }
  function hoverClose(){cancelHoverClose();if(!pinned)hoverTimer=setTimeout(()=>{if(!pinned&&!root.contains(document.activeElement))closePanel()},340)}
- launcher.addEventListener('pointerenter',event=>{if(event.pointerType==='mouse'&&matchMedia('(hover: hover) and (pointer: fine)').matches)openPanel()});
- launcher.addEventListener('pointerleave',event=>{if(event.pointerType==='mouse')hoverClose()});
- root.addEventListener('pointerenter',cancelHoverClose);
- root.addEventListener('pointerleave',event=>{if(event.pointerType==='mouse')hoverClose()});
- root.addEventListener('pointerdown',()=>{pinned=true;cancelHoverClose()});
  launcher.addEventListener('pointerdown',event=>{if(event.pointerType==='touch'||event.pointerType==='pen'){touchHandled=true;if(panelOpen)closePanel();else openPanel(true)}});
  launcher.addEventListener('pointercancel',()=>{touchHandled=false});
  launcher.addEventListener('click',()=>{if(touchHandled){touchHandled=false;return}if(panelOpen&&!pinned){pinned=true;return}if(panelOpen)closePanel();else openPanel(true)});
  launcher.addEventListener('keydown',event=>{if(event.key==='ArrowDown'){event.preventDefault();openPanel(true,true)}if(event.key==='Escape')closePanel(true)});
  document.addEventListener('pointerdown',event=>{if(panelOpen&&!root.contains(event.target)&&!launcher.contains(event.target))closePanel()});
- // A finger passing over the orb opens it without cancelling native page scrolling.
- document.addEventListener('touchmove',event=>{
-  if(panelOpen||launcher.hidden||!event.touches.length)return;
-  const touch=event.touches[0],rect=launcher.getBoundingClientRect();
-  if(touch.clientX>=rect.left&&touch.clientX<=rect.right&&touch.clientY>=rect.top&&touch.clientY<=rect.bottom)openPanel(true);
- },{passive:true});
  function position(){
   const viewport=window.visualViewport;
   const width=viewport?.width||window.innerWidth,height=viewport?.height||window.innerHeight;
   const mobile=width<=700,floating=header.classList.contains('is-scrolled');
-  launcher.hidden=!mobile&&!floating;
+  launcher.hidden=!panelOpen&&!mobile&&!floating;
   const dockRect=dock.getBoundingClientRect(),contactRect=dock.querySelector('.whatsapp')?.getBoundingClientRect();
   const anchor=contactRect?.width?contactRect:dockRect;
-  const orbSize=mobile?100:120;
+  const orbSize=mobile?64:120;
   const anchorCenter=anchor.left+anchor.width/2;
   const center=Math.max(orbSize/2+12,Math.min(width-orbSize/2-12,anchorCenter));
-  const orbTop=Math.max(12,anchor.bottom+(mobile?12:16));
+  const orbTop=mobile?Math.max(12,height-orbSize-24):Math.max(12,anchor.bottom+16);
   const keyboardInset=Math.max(0,window.innerHeight-height-(viewport?.offsetTop||0));
-  launcher.style.setProperty('--sf-orb-right',`${width-center-orbSize/2}px`);
+  launcher.style.setProperty('--sf-orb-right',`${mobile?16:width-center-orbSize/2}px`);
   launcher.style.setProperty('--sf-orb-top',`${orbTop}px`);
   launcher.style.setProperty('--sf-orb-bottom','auto');
-  if(mobile){
-   root.style.setProperty('--sf-width',`${width-24}px`);root.style.setProperty('--sf-right','12px');root.style.setProperty('--sf-top','auto');root.style.setProperty('--sf-bottom',`calc(${16+keyboardInset}px + env(safe-area-inset-bottom,0px))`);root.style.setProperty('--sf-max-height',`${Math.max(100,Math.min(620,height-orbTop-orbSize-28))}px`);root.dataset.placement='bottom';
-  }else{
-   const right=Math.max(12,width-dockRect.right),panelTop=orbTop+orbSize+12;
-   root.style.setProperty('--sf-width',`${Math.min(Math.max(dockRect.width,340),540,width-24)}px`);root.style.setProperty('--sf-right',`${right}px`);root.style.setProperty('--sf-top',`${panelTop}px`);root.style.setProperty('--sf-bottom','auto');root.style.setProperty('--sf-max-height',`${Math.max(100,height-panelTop-16)}px`);root.dataset.placement='top';
-  }
+  const panelWidth=mobile?width-20:Math.min(560,width-40);
+  const top=(viewport?.offsetTop||0)+12;
+  root.style.setProperty('--sf-width',`${panelWidth}px`);root.style.setProperty('--sf-right',`${(width-panelWidth)/2}px`);root.style.setProperty('--sf-top',`${top}px`);root.style.setProperty('--sf-bottom','auto');root.style.setProperty('--sf-max-height',`${Math.max(120,height-24)}px`);root.dataset.placement='top';
   if(launcher.hidden){closePanel(false,true);return}
   if(!panelOpen&&root.dataset.revealed!=='true')root.hidden=true;
  }

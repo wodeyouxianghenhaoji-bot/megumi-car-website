@@ -14,17 +14,19 @@
  map.attributionControl.setPrefix(false);
  const tiles=L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png',{
   minZoom:5,maxZoom:18,className:'megumi-dark-tiles',
-  attribution:'<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">国土地理院</a> · 配色加工'
+  attribution:'<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">'+(window.MEGUMI_I18N?.t('地图来源')||'国土地理院 · 配色加工')+'</a>'
  }).addTo(map);
  const icon=L.divIcon({className:'company-pin',iconSize:[30,38],iconAnchor:[15,38],html:'<svg viewBox="0 0 30 38" aria-hidden="true"><path d="M15 2C8 2 3 7 3 14c0 9 12 21 12 21s12-12 12-21C27 7 22 2 15 2Z" fill="#a5dfb9" stroke="#f0fff5" stroke-width="1.5"/><circle cx="15" cy="14" r="4.5" fill="#15231b"/></svg>'});
  const marker=L.marker(places.hq.point,{icon,title:places.hq.title}).addTo(map);
  marker.bindTooltip(places.hq.title,{permanent:true,direction:'top',offset:[0,-38],className:'company-map-label'});
  const update=()=>{
   const active=document.querySelector('[data-map].active').dataset.map;
-  const place=places[active];map.setView(place.point,16,{animate:false});marker.setLatLng(place.point);marker.setTooltipContent(place.title);
-  marker.options.title=place.title;const node=marker.getElement();if(node)node.title=place.title;
+  const place=places[active],title=window.MEGUMI_I18N?.translate(place.title)||place.title;map.setView(place.point,16,{animate:false});marker.setLatLng(place.point);marker.setTooltipContent(title);
+  marker.options.title=title;const node=marker.getElement();if(node)node.title=title;
  };
  document.querySelectorAll('[data-map]').forEach(button=>button.addEventListener('click',()=>queueMicrotask(update)));
+ window.addEventListener('megumi:languagechange',()=>{update();map.attributionControl.removeAttribution(tiles.options.attribution);tiles.options.attribution='<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">'+window.MEGUMI_I18N.t('地图来源')+'</a>';map.attributionControl.addAttribution(tiles.options.attribution)});
+ update();
  // 按实际容器尺寸加载，不阻挡手机页面滚动。
  if('ResizeObserver' in window)new ResizeObserver(()=>map.invalidateSize({pan:false})).observe(element);
  const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))map.invalidateSize({pan:false})});observer.observe(element);
