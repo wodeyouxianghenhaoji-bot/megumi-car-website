@@ -19,8 +19,8 @@
   return regionCurrency[automaticRegion()]||'USD';
  }
  const signature=()=>locale()+':'+JSON.stringify(navigator.languages?.length?navigator.languages:[navigator.language]);
- let manual=get('megumi-currency-mode')==='manual'&&get('megumi-currency-context')===signature();
- let currency=manual?get(CHOICE):detect(),snapshot=null,loading=false,failed=false,attempted=false,lastAttempt=0;
+ let manual=false;
+ let currency=detect(),snapshot=null,loading=false,failed=false,attempted=false,lastAttempt=0;
  if(!/^[A-Z]{3}$/.test(currency))currency=detect();
  function validate(data){
   const stamp=data?.time_last_update_unix,next=data?.time_next_update_unix;
@@ -41,7 +41,7 @@
  const search=document.createElement('input');search.type='search';search.className='choice-search';search.id='currency-search';search.autocomplete='off';
  const list=document.createElement('div');list.className='currency-options';picker.content.append(search,list);
  const validCountries=window.MEGUMI_CONTACT_CONTEXT.codes;
- let region=manual?get('megumi-price-region'):automaticRegion();
+ let region=automaticRegion();
  function alignRegion(){if(territories[region]?.includes(currency))return;const preferred={ar:'AE',zh:'CN',ja:'JP',en:'US',fr:'FR',de:'DE',it:'IT',es:'ES',nl:'NL',pt:'PT',ru:'RU'}[locale().split('-')[0]];region=territories[preferred]?.includes(currency)?preferred:Object.keys(territories).find(key=>validCountries.includes(key)&&territories[key].includes(currency))||'US'}
  alignRegion();
  const displayCache=new Map(),nameCache=new Map(),symbolCache=new Map();

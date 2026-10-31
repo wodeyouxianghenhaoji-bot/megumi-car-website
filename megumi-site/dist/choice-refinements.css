@@ -9,13 +9,15 @@
 }
 [data-theme] .topbar.is-scrolled .header-actions::before{background:linear-gradient(135deg,#ffffff40,#ffffff08 35%,#ffffff20 75%,#ffffff12)}
 /* One hairline only, rather than stacked rim strokes. */
-[data-theme] .topbar.is-scrolled .header-actions{border-width:.5px!important;border-color:#ffffff30!important;box-shadow:0 8px 25px #00000012!important}
+[data-theme] .topbar.is-scrolled .header-actions{border:0!important;box-shadow:inset 0 0 0 .33px #ffffff30,0 8px 25px #00000012!important}
 [data-theme] .topbar.is-scrolled .header-actions::before,[data-theme] .topbar.is-scrolled .header-actions::after{display:none!important}
 /* The expanded finder transmits the page instead of using a solid blue-grey fill. */
-#sf-backdrop{background:#00000020;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-[data-theme] #smart-finder.sf{background:linear-gradient(135deg,#ffffff16,#ffffff04 60%,#ffffff0c)!important;border:.5px solid #ffffff38;box-shadow:0 16px 60px #0003;backdrop-filter:blur(16px) saturate(145%);-webkit-backdrop-filter:blur(16px) saturate(145%)}
+#sf-backdrop{background:#0000000d;backdrop-filter:blur(1px);-webkit-backdrop-filter:blur(1px)}
+[data-theme] #smart-finder.sf{background:linear-gradient(135deg,#ffffff0a,#ffffff02 60%,#ffffff06)!important;border:.5px solid #ffffff38;box-shadow:0 16px 60px #0002;backdrop-filter:blur(8px) saturate(135%);-webkit-backdrop-filter:blur(8px) saturate(135%)}
 #smart-finder.sf::before{display:none}
-#smart-finder .sf-footer{background:transparent}
+[data-theme] #smart-finder :is(.sf-heading,.sf-section,.sf-content,.sf-footer){background:transparent!important}
+[data-theme] #smart-finder .sf-choice{background:linear-gradient(135deg,#ffffff0c,#ffffff02)!important}
+[data-theme] #smart-finder .sf-brand{background:#ffffff08!important;color:inherit!important;border-color:#ffffff30;box-shadow:none}
 #smart-finder .sf-destination select,#smart-finder .sf-input{background:#ffffff0c;box-shadow:none}
 [data-theme=light] #smart-finder{color:#162330}
 [data-theme=light] #smart-finder :is(.sf-heading p,.sf-note,.sf-label,.sf-field,.sf-choice-copy small,.sf-amount>span,.sf-reset){color:#34485a}

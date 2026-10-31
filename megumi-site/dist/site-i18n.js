@@ -7,9 +7,10 @@
  const set=(key,value)=>{try{localStorage.setItem(key,value)}catch{}};
  const match=value=>{const code=String(value||'').replaceAll('_','-').toLowerCase().split('-')[0];return Object.hasOwn(catalogs,code)?code:null};
  const systemSignature=()=>JSON.stringify(navigator.languages?.length?navigator.languages:[navigator.language]);
- const POLICY='system-auto-v2';
- const changedSystem=get('megumi-system-language-signature')!==systemSignature();
- let preference=get('megumi-language-policy')===POLICY&&!changedSystem?(get('megumi-language-choice')||'auto'):'auto';
+ // Every visit starts with the browser's system language, including after reload.
+ // An explicit menu choice applies to this page only; stale choices cannot win.
+ const POLICY='system-auto-each-visit-v3';
+ let preference='auto';
  set('megumi-language-policy',POLICY);set('megumi-system-language-signature',systemSignature());set('megumi-language-choice',preference);
  const detect=()=>{for(const locale of navigator.languages?.length?navigator.languages:[navigator.language]){const code=match(locale);if(code)return code}return 'en'};
  let language=preference==='auto'?detect():(match(preference)||detect());
@@ -84,7 +85,7 @@
   if(observerWasActive)observe();
   window.dispatchEvent(new CustomEvent('megumi:languagechange',{detail:{language,preference}}));
  }
- function choose(value){preference=value==='auto'?'auto':match(value)||'auto';language=preference==='auto'?detect():preference;set('megumi-language-choice',preference);apply()}
+ function choose(value){preference=value==='auto'?'auto':match(value)||'auto';language=preference==='auto'?detect():preference;set('megumi-language-choice','auto');apply()}
  const observer=new MutationObserver(changes=>{
   observer.disconnect();
   for(const change of changes){if(change.type==='characterData')visit(change.target);else if(change.type==='attributes'){if(!change.target.closest('#smart-finder,#language-menu,#language-toggle'))attributes(change.target)}else change.addedNodes.forEach(visit)}
@@ -102,6 +103,6 @@
  document.querySelector('#language-toggle').addEventListener('click',event=>languagePicker.open(event.currentTarget));
  document.addEventListener('click',event=>{const option=event.target.closest('#language-menu [data-lang]');if(option){choose(option.dataset.lang);languagePicker.close()}});
  window.addEventListener('languagechange',()=>{preference='auto';language=detect();set('megumi-language-choice','auto');set('megumi-system-language-signature',systemSignature());apply()});
- window.addEventListener('storage',event=>{if(event.key==='megumi-language-choice'){preference=event.newValue||'auto';language=preference==='auto'?detect():match(preference)||detect();apply()}});
+ window.addEventListener('storage',event=>{if(event.key==='megumi-language-choice'&&event.newValue==='auto'){preference='auto';language=detect();apply()}});
  apply();started=true;observe();reserveHeaderSpace();
 })();
