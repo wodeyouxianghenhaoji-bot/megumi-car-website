@@ -6,7 +6,11 @@
  const get=key=>{try{return localStorage.getItem(key)}catch{return null}};
  const set=(key,value)=>{try{localStorage.setItem(key,value)}catch{}};
  const match=value=>{const code=String(value||'').replaceAll('_','-').toLowerCase().split('-')[0];return Object.hasOwn(catalogs,code)?code:null};
- let preference=get('megumi-language-choice')||'auto';
+ const systemSignature=()=>JSON.stringify(navigator.languages?.length?navigator.languages:[navigator.language]);
+ const POLICY='system-auto-v2';
+ const changedSystem=get('megumi-system-language-signature')!==systemSignature();
+ let preference=get('megumi-language-policy')===POLICY&&!changedSystem?(get('megumi-language-choice')||'auto'):'auto';
+ set('megumi-language-policy',POLICY);set('megumi-system-language-signature',systemSignature());set('megumi-language-choice',preference);
  const detect=()=>{for(const locale of navigator.languages?.length?navigator.languages:[navigator.language]){const code=match(locale);if(code)return code}return 'en'};
  let language=preference==='auto'?detect():(match(preference)||detect());
  const languagePicker=window.MEGUMI_CHOOSER.create('language-dialog');
@@ -97,7 +101,7 @@
  window.addEventListener('resize',reserveHeaderSpace,{passive:true});window.addEventListener('megumi:languagechange',()=>requestAnimationFrame(reserveHeaderSpace));
  document.querySelector('#language-toggle').addEventListener('click',event=>languagePicker.open(event.currentTarget));
  document.addEventListener('click',event=>{const option=event.target.closest('#language-menu [data-lang]');if(option){choose(option.dataset.lang);languagePicker.close()}});
- window.addEventListener('languagechange',()=>{if(preference==='auto'){language=detect();apply()}});
+ window.addEventListener('languagechange',()=>{preference='auto';language=detect();set('megumi-language-choice','auto');set('megumi-system-language-signature',systemSignature());apply()});
  window.addEventListener('storage',event=>{if(event.key==='megumi-language-choice'){preference=event.newValue||'auto';language=preference==='auto'?detect():match(preference)||detect();apply()}});
  apply();started=true;observe();reserveHeaderSpace();
 })();

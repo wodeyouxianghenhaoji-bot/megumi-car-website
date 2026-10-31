@@ -9,13 +9,18 @@
  const set=(key,value)=>{try{localStorage.setItem(key,value)}catch{}};
  const t=source=>window.MEGUMI_I18N?.t(source)||source;
  const locale=()=>document.documentElement.lang||'en';
- function detect(){
-  // A browser's locale gives a preference, not the visitor's physical location.
-  const country=window.MEGUMI_CONTACT_CONTEXT?.country;if(regionCurrency[country])return regionCurrency[country];
-  for(const value of navigator.languages?.length?navigator.languages:[navigator.language]){try{const region=new Intl.Locale(value.replaceAll('_','-')).region;if(regionCurrency[region])return regionCurrency[region]}catch{}}
-  const lang=locale().split('-')[0];return {ar:'AED',zh:'CNY',ja:'JPY',en:'USD',fr:'EUR',de:'EUR',it:'EUR',es:'EUR',nl:'EUR',pt:'EUR',ru:'RUB'}[lang]||'USD';
+ const defaultRegions={ar:'AE',zh:'CN',ja:'JP',en:'US',fr:'FR',de:'DE',it:'IT',es:'ES',nl:'NL',pt:'PT',ru:'RU'};
+ function automaticRegion(){
+  const language=locale().split('-')[0];
+  for(const value of navigator.languages?.length?navigator.languages:[navigator.language]){try{const tag=new Intl.Locale(value.replace(/_/g,'-'));if(tag.language===language&&regionCurrency[tag.region])return tag.region}catch{}}
+  return defaultRegions[language]||'US';
  }
- let currency=get(CHOICE)||detect(),snapshot=null,loading=false,failed=false,attempted=false,lastAttempt=0;
+ function detect(){
+  return regionCurrency[automaticRegion()]||'USD';
+ }
+ const signature=()=>locale()+':'+JSON.stringify(navigator.languages?.length?navigator.languages:[navigator.language]);
+ let manual=get('megumi-currency-mode')==='manual'&&get('megumi-currency-context')===signature();
+ let currency=manual?get(CHOICE):detect(),snapshot=null,loading=false,failed=false,attempted=false,lastAttempt=0;
  if(!/^[A-Z]{3}$/.test(currency))currency=detect();
  function validate(data){
   const stamp=data?.time_last_update_unix,next=data?.time_next_update_unix;
@@ -36,7 +41,7 @@
  const search=document.createElement('input');search.type='search';search.className='choice-search';search.id='currency-search';search.autocomplete='off';
  const list=document.createElement('div');list.className='currency-options';picker.content.append(search,list);
  const validCountries=window.MEGUMI_CONTACT_CONTEXT.codes;
- let region=get('megumi-price-region')||window.MEGUMI_CONTACT_CONTEXT.country;
+ let region=manual?get('megumi-price-region'):automaticRegion();
  function alignRegion(){if(territories[region]?.includes(currency))return;const preferred={ar:'AE',zh:'CN',ja:'JP',en:'US',fr:'FR',de:'DE',it:'IT',es:'ES',nl:'NL',pt:'PT',ru:'RU'}[locale().split('-')[0]];region=territories[preferred]?.includes(currency)?preferred:Object.keys(territories).find(key=>validCountries.includes(key)&&territories[key].includes(currency))||'US'}
  alignRegion();
  const displayCache=new Map(),nameCache=new Map(),symbolCache=new Map();
@@ -45,7 +50,7 @@
  function caption(code){const small=document.createElement('small');const sign=document.createElement('bdi');sign.textContent=symbol(code);const iso=document.createElement('bdi');iso.textContent=code;small.append(sign,document.createTextNode(' · '),iso);return small}
  function choose(nextRegion,nextCurrency=regionCurrency[nextRegion]){
   if(!validCountries.includes(nextRegion)||!territories[nextRegion]?.includes(nextCurrency)||snapshot&&!snapshot.rates[nextCurrency])return;
-  region=nextRegion;currency=nextCurrency;set(CHOICE,currency);set('megumi-price-region',region);render();window.dispatchEvent(new Event('megumi:currencychange'));
+  manual=true;region=nextRegion;currency=nextCurrency;set(CHOICE,currency);set('megumi-price-region',region);set('megumi-currency-mode','manual');set('megumi-currency-context',signature());render();window.dispatchEvent(new Event('megumi:currencychange'));
  }
  function options(){
   const active=document.activeElement?.dataset.priceOption;
@@ -64,7 +69,7 @@
  }
  function controls(){
   alignRegion();
-  trigger.replaceChildren();const name=document.createElement('strong');name.textContent=countryName(region);const arrow=document.createElement('span');arrow.textContent='⌄';arrow.setAttribute('aria-hidden','true');trigger.append(name,caption(currency),arrow);trigger.setAttribute('aria-label',t('当地货币')+': '+countryName(region)+' · '+currency);
+  trigger.textContent=t('当地货币')+' · '+currency+' ⌄';trigger.setAttribute('aria-label',t('修改当地货币')+': '+countryName(region)+' · '+currency);
   picker.title.textContent=t('修改当地货币');picker.closeButton.setAttribute('aria-label',t('关闭弹窗'));search.placeholder=t('搜索国家或货币');search.setAttribute('aria-label',t('搜索国家或货币'));if(picker.dialog.open)options();
  }
  trigger.addEventListener('click',()=>{search.value='';options();picker.open(trigger)});
@@ -97,8 +102,8 @@
   catch{failed=true}
   finally{clearTimeout(timeout);loading=false;attempted=true;render();schedule()}
  }
- window.addEventListener('megumi:contextchange',event=>{const next=regionCurrency[event.detail.country];if(next){currency=next;region=event.detail.country;set(CHOICE,currency);set('megumi-price-region',region)}render();window.dispatchEvent(new Event('megumi:currencychange'))});
- window.addEventListener('megumi:languagechange',()=>{if(!get(CHOICE))currency=detect();render()});
+ window.addEventListener('megumi:contextchange',()=>render());
+ window.addEventListener('megumi:languagechange',()=>{if(get('megumi-currency-context')!==signature()){manual=false;set('megumi-currency-mode','auto')}if(!manual){currency=detect();region=automaticRegion()}render();window.dispatchEvent(new Event('megumi:currencychange'))});
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
  new MutationObserver(changes=>{if(changes.some(change=>[...change.addedNodes].some(node=>node.nodeType===1&&(node.matches('[data-price-jpy]')||node.querySelector('[data-price-jpy]')))))render()}).observe(document.querySelector('main'),{childList:true,subtree:true});
  new MutationObserver(changes=>{if(changes.some(change=>[...change.addedNodes].some(node=>node.nodeType===1&&(node.matches('[data-price-jpy]')||node.querySelector('[data-price-jpy]')))))render()}).observe(document.querySelector('#vehicle-detail'),{childList:true,subtree:true});
