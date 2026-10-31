@@ -86,9 +86,10 @@ body.choice-open{position:fixed;overflow:hidden;width:100%;overscroll-behavior:n
 /* Give the two contact actions priority and keep the language control secondary. */
 .topbar.is-scrolled .language-wrap{align-self:center}
 [data-theme] .topbar.is-scrolled #language-toggle{width:104px;min-height:52px;padding:10px 12px;border-radius:16px;font-size:14px;gap:5px}
-[data-theme] .topbar.is-scrolled .whatsapp{background:linear-gradient(135deg,#20c779,#16ac5c)!important;box-shadow:inset 0 1px 0 #b4f5d045,0 0 16px #20c77924!important;color:#fff}
+[data-theme] .topbar.is-scrolled .whatsapp{background:linear-gradient(135deg,#24cc7d,#16b362)!important;box-shadow:inset 0 1px 0 #b4f5d060,inset 0 0 14px #54ffa325,0 0 18px #20c77932!important;color:#fff}
 /* Place the soft halo behind the button so its contour does not clip the light. */
-[data-theme] .topbar.is-scrolled .header-actions::before{content:'';display:block!important;position:absolute;inset:8px auto;inset-inline-start:8px;width:calc((100% - 112px)/2);height:auto;padding:0;border:0;border-radius:20px;background:radial-gradient(ellipse,#23d47b42,transparent 72%);box-shadow:0 0 15px #20c77924;filter:blur(9px);mask:none;-webkit-mask:none;z-index:-1;opacity:.65;pointer-events:none}
+[data-theme] .topbar.is-scrolled .header-actions::before{content:'';display:block!important;position:absolute;inset:8px auto;inset-inline-start:8px;width:calc((100% - 112px)/2);height:auto;padding:0;border:0;border-radius:20px;background:radial-gradient(ellipse,#23d47b55,transparent 74%);box-shadow:0 0 18px #20c77938;filter:blur(9px);mask:none;-webkit-mask:none;z-index:-1;opacity:.75;pointer-events:none}
+[data-theme] .button.primary[data-contact=whatsapp],[data-theme] .contact-action--wa,[data-theme] #smart-finder .sf-cta{box-shadow:0 0 18px #20c7792e,0 5px 18px #20c77918,inset 0 1px 0 #c7ffdf45}
 @media(min-width:701px) and (max-width:1000px){[data-theme] .topbar.is-scrolled #language-toggle{width:96px;min-height:48px;font-size:13px}}
 @media(max-width:700px){
  [data-theme] .topbar.is-scrolled .header-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 66px!important}
