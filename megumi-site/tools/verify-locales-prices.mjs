@@ -9,7 +9,7 @@ const {Window}=await import(pathToFileURL(path.resolve(process.argv[2])).href);
 const dist=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../dist');
 const html=fs.readFileSync(path.join(dist,'index.html'),'utf8');
 const catalog=JSON.parse(fs.readFileSync(path.join(dist,'finder-data.json'),'utf8'));
-const files=['config.js','app.js','finder-i18n.js','smart-finder.js','site-i18n-data.js','site-i18n.js','contact-context.js','prices.js'];
+const files=['config.js','app.js','finder-i18n.js','smart-finder.js','site-i18n-data.js','choice-dialog.js','site-i18n.js','contact-context.js','assets/territory-currencies.js','prices.js'];
 const tick=()=>new Promise(resolve=>setTimeout(resolve,15));
 let checks=0;
 const check=(condition,message)=>{assert.ok(condition,message);checks++};
@@ -22,7 +22,7 @@ async function setup({locales=['en-US'],width=390,offline=false,storageBlocked=f
  w.matchMedia=query=>({matches:query.includes('prefers-reduced-motion')||width>700&&query.includes('hover: hover'),addEventListener(){},removeEventListener(){}});
  w.document.write(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,''));
  let requests=0;
- const now=Math.floor(Date.now()/1000),rates={result:'success',base_code:'JPY',time_last_update_unix:now-600,time_next_update_unix:now+86000,rates:{JPY:1,USD:.0067,AED:.0246,SAR:.0251,CNY:.047,EUR:.0062,RUB:.62}};
+ const now=Math.floor(Date.now()/1000),rates={result:'success',base_code:'JPY',time_last_update_unix:now-600,time_next_update_unix:now+86000,rates:{JPY:1,USD:.0067,AED:.0246,SAR:.0251,CNY:.047,EUR:.0062,RUB:.62,GBP:.005,QAR:.024,OMR:.0025,KWD:.002,BHD:.0025,EGP:.3,JOD:.0047,IQD:8,LBP:600,SYP:90,ILS:.024,YER:1.5,LYD:.032,TND:.02,DZD:.9,MAD:.06,MRU:.26,SDG:4,SOS:3.8,DJF:1.2,KMF:3}};
  if(cached){rates.time_next_update_unix=now-60;w.localStorage.setItem('megumi-fx-jpy-v1',JSON.stringify(rates))}
  if(savedLanguage)w.localStorage.setItem('megumi-language-choice',savedLanguage);
  if(storageBlocked)Object.defineProperty(w,'localStorage',{get(){throw Error('Storage unavailable')}});
@@ -41,6 +41,12 @@ check(w.MEGUMI_CONTACT_CONTEXT.codes.length===249,'249 country and territory cho
 check(w.MEGUMI_PRICES.validate({...ctx.rates,base_code:'USD'})===null,'Reject wrong rate base');
 check(w.MEGUMI_PRICES.validate({...ctx.rates,rates:{JPY:1,USD:0,AED:1,SAR:1}})===null,'Reject zero exchange rate');
 const getText=()=>d.body.textContent;
+const langButton=d.querySelector('#language-toggle');langButton.click();check(d.querySelector('#language-dialog').open,'Language opens native centered modal');check(d.body.classList.contains('choice-open'),'Language locks background scroll');
+check(d.querySelector('#language-dialog').parentElement===d.body,'Language dialog outside header clipping');
+check([...d.querySelectorAll('#language-menu [data-lang]')].every(button=>button.textContent.trim()),'No empty language row');
+check(d.querySelector('[data-lang=ar] span').textContent==='العربية','Arabic autonym visible');check(d.querySelector('[data-lang=zh] span').textContent==='中文','Chinese autonym');
+d.querySelector('[data-lang=zh]').click();await tick();check(!d.querySelector('#language-dialog').open,'Language choice closes immediately');
+langButton.click();d.querySelector('[data-lang=auto]').click();await tick();check(d.querySelector('[data-lang=auto]').getAttribute('aria-current')==='true','Automatic remains available and current');
 for(const [language] of w.MEGUMI_I18N.languages){
  w.MEGUMI_I18N.choose(language);await tick();
  check(d.documentElement.lang===(language==='zh'?'zh-CN':language),'Document language '+language);
@@ -71,14 +77,20 @@ panel.querySelector('[data-sf-toggle=budget]').click();panel.querySelector('[dat
 panel.querySelector('#sf-close').click();await tick();check(panel.inert&&!d.querySelector('main').inert&&!d.body.classList.contains('finder-open'),'Modal close restores background');
 orb.click();check(panel.querySelector('#sf-budget-slider').value==='50000','Selection survives reopening');d.querySelector('#sf-backdrop').click();await tick();check(panel.inert,'Backdrop closes');
 w.SITE_CONFIG.vehicles[0].priceJPY=3000000;w.eval('renderVehicles()');await tick();
-const selector=d.querySelector('#local-currency');selector.value='AED';selector.dispatchEvent(new w.Event('change',{bubbles:true}));await tick();
+check(!d.querySelector('#price-destination,#local-currency,.fx-refresh'),'No redundant price country/currency selects or refresh button');
+const currencyTrigger=d.querySelector('#currency-toggle');currencyTrigger.click();check(d.querySelector('#currency-dialog').open,'Currency opens with one click');
+check(d.querySelector('[data-price-option=AE-AED] strong').textContent===w.MEGUMI_CONTACT_CONTEXT.countryName('AE'),'Country shown as primary currency option');
+check(d.querySelector('[data-price-option=AE-AED] small').textContent.includes('AED'),'Symbol and ISO shown as secondary currency text');
+d.querySelector('[data-price-option=AE-AED]').click();await tick();check(!d.querySelector('#currency-dialog').open,'Currency selection applies and closes without confirmation');
+currencyTrigger.click();const search=d.querySelector('#currency-search');search.value='SAR';search.dispatchEvent(new w.Event('input',{bubbles:true}));check(d.querySelectorAll('[data-price-option]').length===1&&d.querySelector('[data-price-option=SA-SAR]'),'Currency search by ISO');
+search.value='الإمارات';search.dispatchEvent(new w.Event('input',{bubbles:true}));check(d.querySelector('[data-price-option=AE-AED]'),'Arabic country search');d.querySelector('#currency-dialog .choice-close').click();await tick();
 let price=d.querySelector('[data-price-jpy="3000000"]');check(price.querySelectorAll('strong').length===2,'Exactly local plus USD');
 check(price.textContent.includes('73,800')&&price.textContent.includes('20,100'),'JPY to AED and USD math');
 check(!price.textContent.includes('JPY'),'No third JPY price');
-selector.value='SAR';selector.dispatchEvent(new w.Event('change',{bubbles:true}));await tick();check(price.textContent.includes('75,300'),'JPY to SAR math');
+w.MEGUMI_PRICES.choose('SA','SAR');await tick();check(price.textContent.includes('75,300'),'JPY to SAR math');
 d.querySelector('[data-detail="MG-001"]').click();await tick();check(d.querySelector('#vehicle-detail [data-price-jpy]').querySelectorAll('strong').length===2,'Dialog has both prices');
 check(!/[\u3400-\u9fff]/.test(d.querySelector('#vehicle-detail').textContent),'Dialog localized');
-selector.value='USD';selector.dispatchEvent(new w.Event('change',{bubbles:true}));await tick();check(price.querySelectorAll('strong').length===1,'USD locale has no duplicate amount');
+w.MEGUMI_PRICES.choose('US','USD');await tick();check(price.querySelectorAll('strong').length===1,'USD locale has no duplicate amount');
 w.SITE_CONFIG.vehicles[0].priceJPY=null;w.eval('renderVehicles()');await tick();check(d.querySelector('[data-price-jpy]').querySelectorAll('strong').length===0,'Missing price never fabricated');
 check(errors.length===0,'No runtime errors: '+errors.join(','));
 await w.happyDOM.close();
@@ -91,4 +103,14 @@ for(const width of [320,375,390,430,700,1440]){
 for(const cached of [false,true]){const c=await setup({offline:true,cached});check(c.w.MEGUMI_PRICES.state.failed,'Failure exposed');check(Boolean(c.w.MEGUMI_PRICES.snapshot)===cached,'Only actual cached rates used');check(c.d.querySelector('.fx-status').textContent.includes(c.w.MEGUMI_I18N.t(cached?'缓存汇率提示':'汇率暂不可用')),'Failure message');await c.w.happyDOM.close()}
 const manual=await setup({locales:['ar-SA'],savedLanguage:'fr'});check(manual.w.MEGUMI_I18N.language==='fr','Manual language overrides system');check(manual.w.MEGUMI_PRICES.currency==='SAR','Language does not override destination currency');manual.w.MEGUMI_I18N.choose('auto');check(manual.w.MEGUMI_I18N.language==='ar','Automatic mode restores system language');await manual.w.happyDOM.close();
 const keyboard=await setup({keyboard:true});keyboard.d.querySelector('#smart-finder-launcher').click();keyboard.w.visualViewport.height=360;keyboard.w.visualViewport.dispatchEvent(new keyboard.w.Event('resize'));check(keyboard.d.querySelector('#smart-finder').style.getPropertyValue('--sf-max-height')==='336px','Panel follows keyboard viewport');keyboard.d.querySelector('#sf-close').click();await keyboard.w.happyDOM.close();
+const arabic=await setup({locales:['ar-AE']});
+const arabCountries={AE:'AED',SA:'SAR',BH:'BHD',QA:'QAR',KW:'KWD',OM:'OMR',IQ:'IQD',JO:'JOD',LB:'LBP',SY:'SYP',PS:'ILS',YE:'YER',EG:'EGP',LY:'LYD',TN:'TND',DZ:'DZD',MA:'MAD',MR:'MRU',SD:'SDG',SO:'SOS',DJ:'DJF',KM:'KMF'};
+for(const width of [320,390,700,1024,1440]){
+ arabic.w.happyDOM.setWindowSize({width,height:844});arabic.w.dispatchEvent(new arabic.w.Event('resize'));
+ arabic.d.querySelector('#language-toggle').click();check(arabic.d.querySelector('#language-dialog').open,'Arabic language modal '+width);check(arabic.d.querySelector('[data-lang=ar] span').textContent==='العربية','Arabic option complete '+width);arabic.d.querySelector('#language-dialog .choice-close').click();await tick();
+ arabic.d.querySelector('#currency-toggle').click();
+ for(const [country,code] of Object.entries(arabCountries)){const option=arabic.d.querySelector(`[data-price-option="${country}-${code}"]`);check(option?.querySelector('strong').textContent===arabic.w.MEGUMI_CONTACT_CONTEXT.countryName(country),'Arabic country option '+country+' '+width);check(option?.querySelector('small').textContent.includes(code),'Arabic currency symbol/code '+country+' '+width)}
+ arabic.d.querySelector('#currency-dialog .choice-close').click();await tick();
+}
+check(!arabic.errors.length,'Arabic chooser has no runtime errors');await arabic.w.happyDOM.close();
 console.log(`PASS: ${checks} assertions. DOM/logic only; real-browser layout remains unverified.`);

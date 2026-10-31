@@ -2,13 +2,16 @@
 (() => {
  'use strict';
  const catalogs=window.MEGUMI_SITE_I18N;
- const languages=[['zh','中文（简体）'],['en','English'],['ar','العربية'],['ja','日本語'],['nl','Nederlands'],['fr','Français'],['de','Deutsch'],['it','Italiano'],['pt','Português'],['ru','Русский'],['es','Español']];
+ const languages=[['zh','中文'],['en','English'],['ar','العربية'],['ja','日本語'],['nl','Nederlands'],['fr','Français'],['de','Deutsch'],['it','Italiano'],['pt','Português'],['ru','Русский'],['es','Español']];
  const get=key=>{try{return localStorage.getItem(key)}catch{return null}};
  const set=(key,value)=>{try{localStorage.setItem(key,value)}catch{}};
  const match=value=>{const code=String(value||'').replaceAll('_','-').toLowerCase().split('-')[0];return Object.hasOwn(catalogs,code)?code:null};
  let preference=get('megumi-language-choice')||'auto';
  const detect=()=>{for(const locale of navigator.languages?.length?navigator.languages:[navigator.language]){const code=match(locale);if(code)return code}return 'en'};
  let language=preference==='auto'?detect():(match(preference)||detect());
+ const languagePicker=window.MEGUMI_CHOOSER.create('language-dialog');
+ const languageMenu=document.querySelector('#language-menu');languageMenu.hidden=false;languagePicker.content.append(languageMenu);
+ document.querySelector('#language-toggle').setAttribute('aria-haspopup','dialog');document.querySelector('#language-toggle').setAttribute('aria-controls','language-dialog');
  const textRecords=new WeakMap(),attributeRecords=new WeakMap(),blocks=new WeakMap();
  const keys=Object.keys(catalogs.zh).sort((a,b)=>b.length-a.length);
  const patterns=keys.filter(key=>key.includes('{')).map(key=>{
@@ -57,12 +60,13 @@
  function menu(){
   const toggle=document.querySelector('#language-toggle'),container=document.querySelector('#language-menu');
   const native=language==='zh'?'中文':languages.find(([code])=>code===language)[1];
+  languagePicker.title.textContent=t('语言');languagePicker.closeButton.setAttribute('aria-label',t('关闭弹窗'));
   toggle.replaceChildren(document.createTextNode(native),Object.assign(document.createElement('span'),{textContent:'⌄'}));
   toggle.setAttribute('aria-label',t('语言')+': '+native);
   container.replaceChildren();
   for(const [code,name] of [['auto',t('自动（跟随系统）')],...languages]){
    const button=document.createElement('button');button.type='button';button.dataset.lang=code;button.lang=code==='auto'?language:code;button.dir=code==='ar'?'rtl':'ltr';
-   button.setAttribute('aria-current',String(code===preference));button.classList.toggle('active',code===preference);button.append(document.createTextNode(name));
+   button.setAttribute('aria-current',String(code===preference));button.classList.toggle('active',code===preference);const label=document.createElement('span');label.textContent=name;button.append(label);
    if(code===preference){const label=document.createElement('small');label.textContent=t('当前');button.append(label)}container.append(button);
   }
  }
@@ -91,7 +95,8 @@
  const reserveHeaderSpace=()=>{if(window.innerWidth<=700&&!header.classList.contains('is-scrolled')){const height=header.getBoundingClientRect().height;if(height>0)document.documentElement.style.setProperty('--mobile-header-height',Math.ceil(height)+'px')}};
  if('ResizeObserver' in window)new ResizeObserver(reserveHeaderSpace).observe(header);
  window.addEventListener('resize',reserveHeaderSpace,{passive:true});window.addEventListener('megumi:languagechange',()=>requestAnimationFrame(reserveHeaderSpace));
- document.addEventListener('click',event=>{const option=event.target.closest('#language-menu [data-lang]');if(option){choose(option.dataset.lang);document.querySelector('#language-menu').hidden=true;document.querySelector('#language-toggle').setAttribute('aria-expanded','false')}});
+ document.querySelector('#language-toggle').addEventListener('click',event=>languagePicker.open(event.currentTarget));
+ document.addEventListener('click',event=>{const option=event.target.closest('#language-menu [data-lang]');if(option){choose(option.dataset.lang);languagePicker.close()}});
  window.addEventListener('languagechange',()=>{if(preference==='auto'){language=detect();apply()}});
  window.addEventListener('storage',event=>{if(event.key==='megumi-language-choice'){preference=event.newValue||'auto';language=preference==='auto'?detect():match(preference)||detect();apply()}});
  apply();started=true;observe();reserveHeaderSpace();
