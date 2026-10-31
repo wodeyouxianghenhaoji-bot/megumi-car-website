@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>MEGUMI · Language check</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px 16px;background:#101417;color:#f1f5f9;font:16px/1.65 system-ui,sans-serif}main{max-width:680px;margin:auto}h1{font-size:24px;line-height:1.4}p{color:#cbd5e1}dl{margin:24px 0;padding:18px;background:#1d252d;border:1px solid #3a4652;border-radius:16px}dt{margin-top:16px;font-size:13px;color:#a9bfd1}dt:first-child{margin-top:0}dd{margin:4px 0 0;overflow-wrap:anywhere;font-weight:600}button,a{display:inline-block;min-height:46px;padding:10px 16px;border:1px solid #4c6375;border-radius:10px;color:#fff;background:#28465b;font:inherit;text-decoration:none}button{cursor:pointer}iframe{width:100%;height:300px;border:1px solid #3a4652;border-radius:16px;background:#111}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;color:#cbd5e1}small{color:#a9bfd1}
+</style></head>
+<body><main>
+<h1>语言检查 / Language check</h1>
+<p>请用刚才显示中文的同一个浏览器打开此页。<br>Open this page in the same browser that showed Chinese.</p>
+<p>结果只显示在本机，不会上传或保存。<br>The results stay on this device. Nothing is uploaded or saved by this page.</p>
+<dl id="results" aria-live="polite"></dl>
+<button id="copy" type="button">复制结果 / Copy results</button>
+<a href="./">返回网站 / Back to website</a>
+<p id="copy-state" role="status"></p>
+<h2>网站实际显示 / Website preview</h2>
+<iframe id="preview" title="MEGUMI language preview" src="./?language-check=1"></iframe>
+<pre id="report"></pre>
+</main>
+<script>
+(() => {
+ 'use strict';
+ const names={zh:'中文 / Chinese',en:'English / 英语',ar:'العربية / 阿拉伯语',ja:'日本語 / 日语',nl:'Nederlands',fr:'Français',de:'Deutsch',it:'Italiano',pt:'Português',ru:'Русский',es:'Español'};
+ const values=navigator.languages&&navigator.languages.length?Array.from(navigator.languages):[navigator.language];
+ const match=value=>{const code=String(value||'').replace(/_/g,'-').toLowerCase().split('-')[0];return Object.prototype.hasOwnProperty.call(names,code)?code:null};
+ const expected=values.map(match).filter(Boolean)[0]||'en';
+ const rows=[['Browser primary / 浏览器主语言',navigator.language||'(not available)'],['Browser preferences / 浏览器语言顺序',values.join(', ')],['Expected website language / 按当前规则应显示',names[expected]],['Actual website language / 网页实际语言','Loading / 检查中'],['Language module / 语言模块','Loading / 检查中'],['Website title / 实际网页标题','Loading / 检查中']];
+ let finished=false;
+ function render(){const list=document.querySelector('#results');list.replaceChildren();for(const [label,value] of rows){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=String(value);list.append(dt,dd)}document.querySelector('#report').textContent=rows.map(row=>row.join(': ')).join('\n')}
+ function inspect(){try{const frame=document.querySelector('#preview'),doc=frame.contentDocument,api=frame.contentWindow.MEGUMI_I18N;if(!doc||!doc.body)return;rows[3][1]=doc.documentElement.lang||'(missing)';rows[4][1]=api?'Started / 已启动; '+api.language+'; '+api.preference:'Not started / 未启动';rows[5][1]=doc.querySelector('.hero h1')?.textContent||doc.title||'(not available)';finished=Boolean(api);render()}catch{rows[4][1]='Preview could not be read / 无法读取预览';render()}}
+ document.querySelector('#preview').addEventListener('load',()=>{inspect();setTimeout(inspect,300)});
+ setTimeout(()=>{if(!finished)inspect()},15000);
+ document.querySelector('#copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(document.querySelector('#report').textContent);document.querySelector('#copy-state').textContent='已复制，请粘贴到聊天里。 / Copied. Paste the results into the chat.'}catch{document.querySelector('#copy-state').textContent='请复制页面底部的结果文字。 / Copy the report shown below.'}});
+ render();
+})();
+</script></body></html>
