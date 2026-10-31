@@ -25,7 +25,7 @@
   });
  }
  function choose(value){country=codes.includes(value)?value:'';set('megumi-destination-country',country);render();window.dispatchEvent(new CustomEvent('megumi:contextchange',{detail:{country}}))}
- document.addEventListener('change',event=>{if(event.target.matches('select[data-destination]'))choose(event.target.value)});
+ document.addEventListener('change',event=>{if(event.target.matches('select[data-destination]')){const value=event.target.value;const panel=event.target.closest('#smart-finder');event.target.blur();choose(value);if(panel&&!panel.inert)panel.querySelector('[data-sf-toggle=brand]')?.focus({preventScroll:true})}});
  window.addEventListener('megumi:languagechange',render);
  window.addEventListener('storage',event=>{if(event.key==='megumi-destination-country'){country=codes.includes(event.newValue)?event.newValue:'';render();window.dispatchEvent(new CustomEvent('megumi:contextchange',{detail:{country}}))}});
  window.MEGUMI_CONTACT_CONTEXT={get country(){return country},countryName,choose,render,message,codes};

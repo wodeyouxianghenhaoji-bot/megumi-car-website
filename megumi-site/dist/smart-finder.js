@@ -108,7 +108,7 @@
  });
  root.addEventListener('change',event=>{if(event.target.id==='sf-type-brand'){state.typeBrand=brands.some(brand=>brand.name===event.target.value)?event.target.value:'';const anchor=root.querySelector('.sf-type-result a');if(anchor)updateLink(anchor,typeMessage())}});
  window.addEventListener('megumi:languagechange',event=>{const next=matchLanguage(event.detail.language);if(next&&next!==language){language=next;build()}});
- const rebuildContext=()=>{const id=root.contains(document.activeElement)?document.activeElement.id:null;build();if(id)document.getElementById(id)?.focus({preventScroll:true})};
+ const rebuildContext=()=>{const active=document.activeElement;const id=root.contains(active)&&!active.matches('select[data-destination]')?active.id:null;build();if(id)document.getElementById(id)?.focus({preventScroll:true})};
  window.addEventListener('megumi:contextchange',rebuildContext);
  window.addEventListener('megumi:currencychange',rebuildContext);
  window.addEventListener('storage',event=>{if(event.key==='megumi-preferred-language'){language=matchLanguage(event.newValue)||initialLanguage();build()}});
