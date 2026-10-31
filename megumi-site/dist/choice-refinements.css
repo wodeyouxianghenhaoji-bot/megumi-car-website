@@ -89,6 +89,8 @@ body.choice-open{position:fixed;overflow:hidden;width:100%;overscroll-behavior:n
 /* The continuous-corner clip cut away the external glow. Keep a rounded box instead. */
 [data-theme] .topbar.is-scrolled .whatsapp{background:linear-gradient(135deg,#24cc7d,#16b362)!important;clip-path:none!important;overflow:visible!important;border-radius:20px!important;box-shadow:0 0 12px #22d77d80,0 0 28px #20c7794d,0 7px 18px #20c77930,inset 0 1px 0 #c7ffdf60!important;color:#fff}
 [data-theme] .button.primary[data-contact=whatsapp],[data-theme] .contact-action--wa,[data-theme] #smart-finder .sf-cta{box-shadow:0 0 12px #22d77d70,0 0 26px #20c77945,0 6px 18px #20c77926,inset 0 1px 0 #c7ffdf55}
+/* The remaining primary actions have gold fills and must emit gold, not green. */
+[data-theme] .primary:not([data-contact=whatsapp]){box-shadow:0 0 12px #d9bc8866,0 0 26px #d9bc8840,0 6px 18px #b9925526,inset 0 1px 0 #fff0cf55}
 @media(min-width:701px) and (max-width:1000px){[data-theme] .topbar.is-scrolled #language-toggle{width:96px;min-height:48px;font-size:13px}}
 @media(max-width:700px){
  [data-theme] .topbar.is-scrolled .header-actions{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 66px!important}
